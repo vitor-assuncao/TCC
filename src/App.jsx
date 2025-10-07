@@ -1,9 +1,9 @@
 // App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomeScreen from './modules/HomeScreen/HomeScreen';
-import FabricaPage from './modules/fabrica/FabricaPage';
-import RepresentantePage from './modules/representante/RepresentantePage';
+import HomeScreen from './pages/HomeScreen';
+import FabricaPage from './pages/FabricaPage';
+import RepresentantePage from './pages/RepresentantePage';
 
 function App() {
   return (
