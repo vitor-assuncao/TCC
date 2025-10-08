@@ -1,10 +1,11 @@
-// backend/routes/produtos.js
 import express from 'express';
 import pool from '../db.js';
 
+
+console.log('🚀 Arquivo produtos.js carregado!');
+
+
 const router = express.Router();
-
-
 
 // [POST] - Criar novo produto
 router.post('/', async (req, res) => {
@@ -16,14 +17,21 @@ router.post('/', async (req, res) => {
       [nome, descricao, sku, unidade_medida, url_imagem]
     );
 
-    res.status(201).json({ id: result.insertId, nome, descricao, sku, unidade_medida, url_imagem });
+    res.status(201).json({
+      id: result.insertId,
+      nome,
+      descricao,
+      sku,
+      unidade_medida,
+      url_imagem
+    });
   } catch (error) {
     console.error('Erro ao criar produto:', error);
     res.status(500).json({ error: 'Erro ao criar produto' });
   }
+});
 
-
-  // [GET] - Listar todos os produtos
+// [GET] - Listar todos os produtos
 router.get('/', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM produtos');
@@ -33,6 +41,5 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar produtos' });
   }
 });
-});
-
+console.log('Exportando router de produtos...');
 export default router;
