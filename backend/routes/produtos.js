@@ -1,33 +1,48 @@
 import express from 'express';
 import pool from '../db.js';
 
-
-console.log('🚀 Arquivo produtos.js carregado!');
-
-
 const router = express.Router();
 
 // [POST] - Criar novo produto
 router.post('/', async (req, res) => {
   const { nome, descricao, sku, unidade_medida, url_imagem } = req.body;
 
+  const connection = await pool.getConnection();
+  await connection.beginTransaction();
+
   try {
-    const [result] = await pool.query(
+    // 1️⃣ Inserir produto na tabela de produtos
+    const [produtoResult] = await connection.query(
       'INSERT INTO produtos (nome, descricao, sku, unidade_medida, url_imagem) VALUES (?, ?, ?, ?, ?)',
       [nome, descricao, sku, unidade_medida, url_imagem]
     );
 
+    const produtoId = produtoResult.insertId;
+
+    // 2️⃣ Inserir automaticamente no estoque (quantidade inicial 0)
+    await connection.query(
+      'INSERT INTO estoque (produto_id, quantidade) VALUES (?, 0)',
+      [produtoId]
+    );
+
+    await connection.commit();
+
     res.status(201).json({
-      id: result.insertId,
+      id: produtoId,
       nome,
       descricao,
       sku,
       unidade_medida,
-      url_imagem
+      url_imagem,
+      message: 'Produto criado e adicionado ao estoque com sucesso!'
     });
+
   } catch (error) {
-    console.error('Erro ao criar produto:', error);
-    res.status(500).json({ error: 'Erro ao criar produto' });
+    await connection.rollback();
+    console.error('Erro ao criar produto e inserir no estoque:', error);
+    res.status(500).json({ error: 'Erro ao criar produto e inserir no estoque' });
+  } finally {
+    connection.release();
   }
 });
 
@@ -41,5 +56,5 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar produtos' });
   }
 });
-console.log('Exportando router de produtos...');
+
 export default router;
