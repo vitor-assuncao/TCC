@@ -81,3 +81,37 @@ export const estoqueService = {
     }
   },
 };
+
+export const representanteService = {
+  criarRepresentante: async (representanteData) => {
+    try {
+      const response = await fetch(`${API_BASE}/representantes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(representanteData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao cadastrar representante');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Erro no serviço:', error);
+      throw error;
+    }
+  },
+
+  listarRepresentantes: async () => {
+    try {
+      const response = await fetch(`${API_BASE}/representantes`);
+      if (!response.ok) throw new Error('Erro ao buscar representantes');
+      return await response.json();
+    } catch (error) {
+      console.error('Erro no serviço:', error);
+      throw error;
+    }
+  }
+};
