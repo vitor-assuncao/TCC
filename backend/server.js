@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import produtosRoutes from './routes/produtos.js';
 import estoqueRoutes from './routes/estoque.js';
+import representanteRoutes from './routes/representantes.js';
 
 const app = express();
 const PORT = 3001;
@@ -14,6 +15,7 @@ console.log('Tentando registrar rotas de produtos...');
 
 app.use('/api/produtos', produtosRoutes);
 app.use('/api/estoque', estoqueRoutes);
+app.use('/api/representantes',representanteRoutes );
 
 app.get('/', (req, res) => {
   res.send('API funcionando!');

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProdutos } from '../hooks/useProdutos';
 import ProdutoForm from '../modules/fabrica/components/ProdutoForm';
+import RepresentanteForm from '../modules/fabrica/components/RepresentanteForm';
 import './FabricaPage.css';
 
 const FabricaPage = () => {
@@ -85,6 +86,13 @@ const FabricaPage = () => {
           >
             💰 Listas de Preço
           </button>
+          <button 
+            className={activeTab === 'representantes' ? 'active' : ''}
+            onClick={() => setActiveTab('representantes')}
+          >
+            🧑‍💼 Representantes
+          </button>
+
         </nav>
 
         <div className="tab-content">
@@ -182,6 +190,13 @@ const FabricaPage = () => {
               <p>Funcionalidade em desenvolvimento...</p>
             </div>
           )}
+          {activeTab === 'representantes' && (
+            <div className="tab-panel">
+              <h2>Cadastro de Representantes</h2>
+              <RepresentanteForm />
+            </div>
+          )}
+
         </div>
       </div>
     </div>
