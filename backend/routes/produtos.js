@@ -3,27 +3,27 @@ import pool from '../db.js';
 
 const router = express.Router();
 
-/**
- * [POST] - Criar novo produto
- */
+/* =======================================
+   [POST] - Criar novo produto
+   ======================================= */
 router.post('/', async (req, res) => {
-  const { nome, descricao, sku, unidade_medida, preco_unitario, url_imagem } = req.body;
+  const { nome, descricao, sku, unidade_medida, url_imagem, preco_unitario = 0 } = req.body;
 
   const connection = await pool.getConnection();
   await connection.beginTransaction();
 
   try {
-    // 1️⃣ Inserir produto na tabela de produtos (agora inclui o preço)
+    // Inserir produto
     const [produtoResult] = await connection.query(
       `INSERT INTO produtos 
-        (nome, descricao, sku, unidade_medida, preco_unitario, url_imagem)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [nome, descricao, sku, unidade_medida, preco_unitario, url_imagem]
+        (nome, descricao, sku, unidade_medida, url_imagem, preco_unitario) 
+        VALUES (?, ?, ?, ?, ?, ?)`,
+      [nome, descricao, sku, unidade_medida, url_imagem, preco_unitario]
     );
 
     const produtoId = produtoResult.insertId;
 
-    // 2️⃣ Criar registro no estoque com quantidade inicial 0
+    // Inserir no estoque com quantidade inicial 0
     await connection.query(
       'INSERT INTO estoque (produto_id, quantidade) VALUES (?, 0)',
       [produtoId]
@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
       unidade_medida,
       preco_unitario,
       url_imagem,
-      message: 'Produto criado e adicionado ao estoque com sucesso!'
+      message: 'Produto criado e adicionado ao estoque com sucesso!',
     });
 
   } catch (error) {
@@ -51,12 +51,16 @@ router.post('/', async (req, res) => {
   }
 });
 
-/**
- * [GET] - Listar todos os produtos
- */
+/* =======================================
+   [GET] - Listar todos os produtos
+   ======================================= */
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM produtos');
+    const [rows] = await pool.query(`
+      SELECT p.*, e.quantidade 
+      FROM produtos p
+      LEFT JOIN estoque e ON e.produto_id = p.id
+    `);
     res.json(rows);
   } catch (error) {
     console.error('Erro ao buscar produtos:', error);
@@ -64,79 +68,59 @@ router.get('/', async (req, res) => {
   }
 });
 
-/**
- * [GET] - Buscar produto por ID
- */
-router.get('/:id', async (req, res) => {
+/* =======================================
+   [PUT] - Atualizar o preço do produto
+   ======================================= */
+router.put('/:id/preco', async (req, res) => {
   const { id } = req.params;
-  try {
-    const [rows] = await pool.query('SELECT * FROM produtos WHERE id = ?', [id]);
-    if (rows.length === 0) {
-      return res.status(404).json({ error: 'Produto não encontrado' });
-    }
-    res.json(rows[0]);
-  } catch (error) {
-    console.error('Erro ao buscar produto:', error);
-    res.status(500).json({ error: 'Erro ao buscar produto' });
-  }
-});
+  const { preco } = req.body;
 
-/**
- * [PUT] - Atualizar produto
- */
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  const { nome, descricao, sku, unidade_medida, preco_unitario, url_imagem } = req.body;
+  if (preco == null || isNaN(preco)) {
+    return res.status(400).json({ error: 'Preço inválido' });
+  }
 
   try {
     const [result] = await pool.query(
-      `UPDATE produtos 
-       SET nome = ?, descricao = ?, sku = ?, unidade_medida = ?, preco_unitario = ?, url_imagem = ?, data_atualizacao = CURRENT_TIMESTAMP
-       WHERE id = ?`,
-      [nome, descricao, sku, unidade_medida, preco_unitario, url_imagem, id]
+      'UPDATE produtos SET preco_unitario = ?, data_atualizacao = CURRENT_TIMESTAMP WHERE id = ?',
+      [preco, id]
     );
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Produto não encontrado' });
     }
 
-    res.json({ message: 'Produto atualizado com sucesso!' });
+    res.json({ message: 'Preço atualizado com sucesso!' });
   } catch (error) {
-    console.error('Erro ao atualizar produto:', error);
-    res.status(500).json({ error: 'Erro ao atualizar produto' });
+    console.error('Erro ao atualizar preço do produto:', error);
+    res.status(500).json({ error: 'Erro ao atualizar preço do produto' });
   }
 });
 
-/**
- * [DELETE] - Excluir produto
- */
-router.delete('/:id', async (req, res) => {
+/* =======================================
+   [PUT] - Atualizar a quantidade no estoque
+   ======================================= */
+router.put('/:id/estoque', async (req, res) => {
   const { id } = req.params;
-  const connection = await pool.getConnection();
+  const { quantidade } = req.body;
+
+  if (quantidade == null || isNaN(quantidade)) {
+    return res.status(400).json({ error: 'Quantidade inválida' });
+  }
 
   try {
-    await connection.beginTransaction();
-
-    // Exclui o estoque vinculado
-    await connection.query('DELETE FROM estoque WHERE produto_id = ?', [id]);
-
-    // Exclui o produto
-    const [result] = await connection.query('DELETE FROM produtos WHERE id = ?', [id]);
-
-    await connection.commit();
+    const [result] = await pool.query(
+      'UPDATE estoque SET quantidade = ?, data_atualizacao = CURRENT_TIMESTAMP WHERE produto_id = ?',
+      [quantidade, id]
+    );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ error: 'Produto não encontrado' });
+      return res.status(404).json({ error: 'Produto não encontrado no estoque' });
     }
 
-    res.json({ message: 'Produto e estoque excluídos com sucesso!' });
-
+    res.json({ message: 'Quantidade de estoque atualizada com sucesso!' });
   } catch (error) {
-    await connection.rollback();
-    console.error('Erro ao excluir produto:', error);
-    res.status(500).json({ error: 'Erro ao excluir produto' });
-  } finally {
-    connection.release();
+    console.error('Erro ao atualizar estoque:', error);
+    res.status(500).json({ error: 'Erro ao atualizar estoque' });
   }
 });
 

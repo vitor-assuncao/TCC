@@ -17,6 +17,32 @@ const FabricaPage = () => {
   const [loadingEstoque, setLoadingEstoque] = useState(false);
   const [errorEstoque, setErrorEstoque] = useState(null);
 
+  // --- PREÇOS ---
+  const [precosEditados, setPrecosEditados] = useState({});
+
+  const handlePrecoChange = (produtoId, novoPreco) => {
+    setPrecosEditados((prev) => ({ ...prev, [produtoId]: novoPreco }));
+  };
+
+const salvarPreco = async (produtoId) => {
+  const novoPreco = precosEditados[produtoId];
+  if (!novoPreco) return;
+
+  try {
+    await fetch(`http://localhost:3001/api/produtos/${produtoId}/preco`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ preco: parseFloat(novoPreco) }),
+    });
+
+    alert('Preço atualizado com sucesso!');
+  } catch (error) {
+    console.error('Erro ao atualizar preço:', error);
+    alert('Erro ao atualizar preço.');
+  }
+};
+
+
   // Carrega o estoque ao abrir a aba
   useEffect(() => {
     if (activeTab === 'estoque') {
@@ -24,34 +50,39 @@ const FabricaPage = () => {
     }
   }, [activeTab]);
 
-  const fetchEstoque = async () => {
-    try {
-      setLoadingEstoque(true);
-      setErrorEstoque(null);
-      const response = await fetch('http://localhost:3001/api/estoque');
-      if (!response.ok) throw new Error('Erro ao buscar estoque');
-      const data = await response.json();
-      setEstoque(data);
-    } catch (err) {
-      setErrorEstoque(err.message);
-    } finally {
-      setLoadingEstoque(false);
-    }
-  };
+const fetchEstoque = async () => {
+  try {
+    setLoadingEstoque(true);
+    setErrorEstoque(null);
+    const response = await fetch('http://localhost:3001/api/produtos');
+    if (!response.ok) throw new Error('Erro ao buscar produtos/estoque');
+    const data = await response.json();
+    setEstoque(data);
+  } catch (err) {
+    setErrorEstoque(err.message);
+  } finally {
+    setLoadingEstoque(false);
+  }
+};
 
-  const atualizarQuantidade = async (produtoId, novaQuantidade) => {
-    try {
-      const response = await fetch(`http://localhost:3001/api/estoque/${produtoId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quantidade: novaQuantidade }),
-      });
-      if (!response.ok) throw new Error('Erro ao atualizar estoque');
-      await fetchEstoque(); // Atualiza a tabela após salvar
-    } catch (err) {
-      alert('Erro ao atualizar estoque: ' + err.message);
-    }
-  };
+
+
+const salvarQuantidade = async (produtoId, novaQuantidade) => {
+  try {
+    const response = await fetch(`http://localhost:3001/api/estoque/${produtoId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quantidade: parseInt(novaQuantidade) }),
+    });
+
+    if (!response.ok) throw new Error('Erro ao atualizar quantidade');
+    alert('Quantidade atualizada com sucesso!');
+  } catch (error) {
+    console.error('Erro ao atualizar estoque:', error);
+    alert('Erro ao atualizar quantidade.');
+  }
+};
+
 
   const handleAdicionarProduto = async (produtoData) => {
     await adicionarProduto(produtoData);
@@ -81,18 +112,11 @@ const FabricaPage = () => {
             📊 Estoque
           </button>
           <button
-            className={activeTab === 'precos' ? 'active' : ''}
-            onClick={() => setActiveTab('precos')}
-          >
-            💰 Listas de Preço
-          </button>
-          <button 
             className={activeTab === 'representantes' ? 'active' : ''}
             onClick={() => setActiveTab('representantes')}
           >
             🧑‍💼 Representantes
           </button>
-
         </nav>
 
         <div className="tab-content">
@@ -116,87 +140,93 @@ const FabricaPage = () => {
           )}
 
           {/* --- ABA ESTOQUE --- */}
-          {activeTab === 'estoque' && (
-            <div className="tab-panel">
-              <h2>Controle de Estoque</h2>
+{activeTab === 'estoque' && (
+  <div className="tab-panel">
+    <h2>Controle de Estoque</h2>
 
-              {loadingEstoque && <p>Carregando estoque...</p>}
-              {errorEstoque && (
-                <div className="error-message">❌ {errorEstoque}</div>
-              )}
+    {/* Mensagens de status */}
+    {loadingEstoque && <p>Carregando estoque...</p>}
+    {errorEstoque && <p style={{ color: 'red' }}>❌ {errorEstoque}</p>}
 
-              {!loadingEstoque && !errorEstoque && estoque.length > 0 && (
-                <table className="estoque-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Produto</th>
-                      <th>Quantidade</th>
-                      <th>Atualizar</th>
-                      <th>Última Atualização</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {estoque.map((item) => (
-                      <tr key={item.id}>
-                        <td>{item.id}</td>
-                        <td>{item.nome_produto}</td>
-                        <td>
-                          <input
-                            type="number"
-                            min="0"
-                            value={item.quantidade}
-                            onChange={(e) =>
-                              setEstoque((prev) =>
-                                prev.map((el) =>
-                                  el.id === item.id
-                                    ? { ...el, quantidade: e.target.value }
-                                    : el
-                                )
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <button
-                            className="btn-update"
-                            onClick={() =>
-                              atualizarQuantidade(
-                                item.produto_id,
-                                parseInt(item.quantidade)
-                              )
-                            }
-                          >
-                            💾 Salvar
-                          </button>
-                        </td>
-                        <td>{new Date(item.data_atualizacao).toLocaleString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+    {estoque.length === 0 ? (
+      <p>Nenhum produto cadastrado no estoque.</p>
+    ) : (
+      <table className="estoque-tabela">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>SKU</th>
+            <th>Quantidade</th>
+            <th>Preço (R$)</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {estoque.map((produto) => (
+            <tr key={produto.id}>
+              <td>{produto.nome}</td>
+              <td>{produto.sku}</td>
 
-              {!loadingEstoque && estoque.length === 0 && (
-                <p>Nenhum produto cadastrado no estoque.</p>
-              )}
-            </div>
-          )}
+              {/* Campo de quantidade editável */}
+              <td>
+                <input
+                  type="number"
+                  value={produto.quantidade ?? 0}
+                  onChange={(e) => {
+                    const novaQtd = parseInt(e.target.value) || 0;
+                    setEstoque((prev) =>
+                      prev.map((p) =>
+                        p.id === produto.id ? { ...p, quantidade: novaQtd } : p
+                      )
+                    );
+                  }}
+                  min="0"
+                  style={{ width: '80px', textAlign: 'center' }}
+                />
+              </td>
 
-          {/* --- ABA PREÇOS --- */}
-          {activeTab === 'precos' && (
-            <div className="tab-panel">
-              <h2>Listas de Preço</h2>
-              <p>Funcionalidade em desenvolvimento...</p>
-            </div>
-          )}
+              {/* Campo de preço editável */}
+              <td>
+                <input
+                  type="number"
+                  value={precosEditados[produto.id] ?? produto.preco ?? 0}
+                  onChange={(e) =>
+                    handlePrecoChange(produto.id, e.target.value)
+                  }
+                  step="0.01"
+                  min="0"
+                  style={{ width: '90px', textAlign: 'right' }}
+                />
+              </td>
+
+              {/* Botão de salvar */}
+              <td>
+                <button
+                  onClick={() => {
+                    salvarPreco(produto.id);
+                    salvarQuantidade(produto.id, produto.quantidade);
+                  }}
+                >
+                  💾 Salvar
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </div>
+)}
+
+
+
+          {/* --- ABA REPRESENTANTES --- */}
           {activeTab === 'representantes' && (
             <div className="tab-panel">
               <h2>Cadastro de Representantes</h2>
               <RepresentanteForm />
             </div>
           )}
-
         </div>
       </div>
     </div>
