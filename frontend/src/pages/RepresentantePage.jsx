@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ClienteForm from "../modules/representante/ClienteForm";
 import "./RepresentantePage.css";
 
 const RepresentantePage = () => {
@@ -32,15 +33,15 @@ const RepresentantePage = () => {
 
   return (
     <div className="representante-container">
-      {/* Barra superior fixa */}
+      {/* Barra superior igual à da Fábrica */}
       <header className="topbar">
         <button className="back-button" onClick={() => navigate("/")}>
           ← Voltar para Início
         </button>
-        <h1> Catálogo de Produtos</h1>
+        <h1>📦 Catálogo de Produtos</h1>
       </header>
 
-      {/* Conteúdo abaixo da barra */}
+      {/* Conteúdo principal */}
       <main className="representante-content">
         <div className="representante-card">
           {produtos.length === 0 ? (
@@ -68,10 +69,18 @@ const RepresentantePage = () => {
                     />
                     <div className="produto-info">
                       <h3>{produto.nome || "Sem nome"}</h3>
-                      <p className="descricao">{produto.descricao || "Sem descrição"}</p>
-                      <p><strong>SKU:</strong> {produto.sku || "N/A"}</p>
-                      <p><strong>Unidade:</strong> {produto.unidade_medida || "N/A"}</p>
-                      <p><strong>Estoque:</strong> {produto.quantidade ?? 0}</p>
+                      <p className="descricao">
+                        {produto.descricao || "Sem descrição"}
+                      </p>
+                      <p>
+                        <strong>SKU:</strong> {produto.sku || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Unidade:</strong> {produto.unidade_medida || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Estoque:</strong> {produto.quantidade ?? 0}
+                      </p>
                       <div className="preco">
                         💰 R$ {Number(produto.preco_unitario || 0).toFixed(2)}
                       </div>
@@ -81,6 +90,12 @@ const RepresentantePage = () => {
               })}
             </div>
           )}
+        </div>
+
+        {/* 🔽 Formulário de Clientes abaixo do catálogo */}
+        <div className="cliente-section">
+          <h2>Cadastro de Clientes</h2>
+          <ClienteForm />
         </div>
       </main>
     </div>

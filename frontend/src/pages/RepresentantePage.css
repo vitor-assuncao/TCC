@@ -122,3 +122,18 @@
   margin-top: 40px;
   font-size: 1.1rem;
 }
+
+.cliente-section {
+  margin-top: 40px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.cliente-section h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
