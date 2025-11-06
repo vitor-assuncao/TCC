@@ -65,4 +65,20 @@ router.put('/:produtoId', async (req, res) => {
   }
 });
 
+router.put('/:produtoId', async (req, res) => {
+  const { produtoId } = req.params;
+  const { quantidade } = req.body;
+
+  try {
+    await pool.query('UPDATE estoque SET quantidade = ? WHERE produto_id = ?', [
+      quantidade,
+      produtoId,
+    ]);
+    res.json({ message: 'Quantidade atualizada com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao atualizar estoque:', error);
+    res.status(500).json({ error: 'Erro ao atualizar estoque' });
+  }
+});
+
 export default router;

@@ -95,3 +95,22 @@
   padding-top: 2rem;
   border-top: 2px solid #eee;
 }
+.estoque-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.estoque-tabela th,
+.estoque-tabela td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.estoque-tabela input {
+  width: 100px;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
