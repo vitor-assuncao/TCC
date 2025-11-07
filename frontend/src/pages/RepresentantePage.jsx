@@ -7,6 +7,7 @@ const RepresentantePage = () => {
   const [produtos, setProdutos] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+  const [mostrarFormCliente, setMostrarFormCliente] = useState(false); // 👈 controle de exibição
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,12 +34,18 @@ const RepresentantePage = () => {
 
   return (
     <div className="representante-container">
-      {/* Barra superior igual à da Fábrica */}
+      {/* Barra superior */}
       <header className="topbar">
         <button className="back-button" onClick={() => navigate("/")}>
           ← Voltar para Início
         </button>
         <h1>📦 Catálogo de Produtos</h1>
+        <button
+          className="add-client-button"
+          onClick={() => setMostrarFormCliente(!mostrarFormCliente)}
+        >
+          {mostrarFormCliente ? "❌ Fechar Cadastro" : "➕ Cadastrar Cliente"}
+        </button>
       </header>
 
       {/* Conteúdo principal */}
@@ -49,7 +56,6 @@ const RepresentantePage = () => {
           ) : (
             <div className="catalogo-grid">
               {produtos.map((produto) => {
-                // Corrigir automaticamente link do Google Drive
                 let imagemUrl = "https://via.placeholder.com/150";
                 if (produto.url_imagem) {
                   if (produto.url_imagem.includes("drive.google.com")) {
@@ -69,18 +75,10 @@ const RepresentantePage = () => {
                     />
                     <div className="produto-info">
                       <h3>{produto.nome || "Sem nome"}</h3>
-                      <p className="descricao">
-                        {produto.descricao || "Sem descrição"}
-                      </p>
-                      <p>
-                        <strong>SKU:</strong> {produto.sku || "N/A"}
-                      </p>
-                      <p>
-                        <strong>Unidade:</strong> {produto.unidade_medida || "N/A"}
-                      </p>
-                      <p>
-                        <strong>Estoque:</strong> {produto.quantidade ?? 0}
-                      </p>
+                      <p className="descricao">{produto.descricao || "Sem descrição"}</p>
+                      <p><strong>SKU:</strong> {produto.sku || "N/A"}</p>
+                      <p><strong>Unidade:</strong> {produto.unidade_medida || "N/A"}</p>
+                      <p><strong>Estoque:</strong> {produto.quantidade ?? 0}</p>
                       <div className="preco">
                         💰 R$ {Number(produto.preco_unitario || 0).toFixed(2)}
                       </div>
@@ -92,11 +90,13 @@ const RepresentantePage = () => {
           )}
         </div>
 
-        {/* 🔽 Formulário de Clientes abaixo do catálogo */}
-        <div className="cliente-section">
-          <h2>Cadastro de Clientes</h2>
-          <ClienteForm />
-        </div>
+        {/* 🔽 Formulário de Cliente mostrado condicionalmente */}
+        {mostrarFormCliente && (
+          <div className="cliente-section">
+            <h2>Cadastro de Clientes</h2>
+            <ClienteForm />
+          </div>
+        )}
       </main>
     </div>
   );
