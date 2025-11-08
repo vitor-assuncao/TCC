@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProdutos } from '../hooks/useProdutos';
 import ProdutoForm from '../modules/fabrica/components/ProdutoForm';
@@ -188,15 +188,16 @@ const salvarQuantidade = async (produtoId, novaQuantidade) => {
               {/* Campo de preço editável */}
               <td>
                 <input
-                  type="number"
-                  value={precosEditados[produto.id] ?? produto.preco ?? 0}
-                  onChange={(e) =>
-                    handlePrecoChange(produto.id, e.target.value)
-                  }
-                  step="0.01"
-                  min="0"
-                  style={{ width: '90px', textAlign: 'right' }}
-                />
+  type="number"
+  value={precosEditados[produto.id] ?? produto.preco_unitario ?? 0}
+  onChange={(e) =>
+    handlePrecoChange(produto.id, e.target.value)
+  }
+  step="0.01"
+  min="0"
+  style={{ width: '90px', textAlign: 'right' }}
+/>
+
               </td>
 
               {/* Botão de salvar */}
