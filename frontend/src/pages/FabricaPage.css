@@ -50,23 +50,30 @@
 
 .fabrica-nav button {
   padding: 1rem 1.5rem;
-  border: 2px solid #ddd;
-  background: white;
-  border-radius: 5px;
+  border: 2px solid #c7d2fe;
+  background: #eef2ff;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
+  color: #4c51bf;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 .fabrica-nav button:hover {
   border-color: #667eea;
-  color: #667eea;
+  color: #3b34c4;
+  background: #e0e7ff;
 }
 
 .fabrica-nav button.active {
   background: #667eea;
   color: white;
   border-color: #667eea;
+  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.3);
 }
 
 .tab-panel {

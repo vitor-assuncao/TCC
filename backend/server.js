@@ -5,6 +5,7 @@ import produtosRoutes from './routes/produtos.js';
 import estoqueRoutes from './routes/estoque.js';
 import representanteRoutes from './routes/representantes.js';
 import clientesRoutes from "./routes/clientes.js";
+import pedidosRoutes from './routes/pedidos.js';
 
 const app = express();
 const PORT = 3001;
@@ -18,6 +19,7 @@ app.use('/api/produtos', produtosRoutes);
 app.use('/api/estoque', estoqueRoutes);
 app.use('/api/representantes',representanteRoutes );
 app.use("/api/clientes", clientesRoutes);
+app.use('/api/pedidos', pedidosRoutes);
 
 app.get('/', (req, res) => {
   res.send('API funcionando!');
