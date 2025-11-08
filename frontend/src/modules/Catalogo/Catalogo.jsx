@@ -55,14 +55,13 @@ const Catalogo = () => {
     setMostrarCarrinho((prev) => !prev);
   };
 
-  // 🔍 Filtragem por SKU
-  // 🔍 Filtragem por SKU e estoque disponível
-const produtosFiltrados = produtos
-  .filter(
-    (produto) =>
-      produto.quantidade > 0 && // apenas produtos com estoque
-      produto.sku?.toLowerCase().includes(buscaSKU.toLowerCase())
-  );
+ // 🔍 Filtra produtos com quantidade válida e estoque maior que 0
+const produtosFiltrados = produtos.filter(
+  (produto) =>
+    Number(produto.quantidade || 0) > 0 &&
+    produto.sku?.toLowerCase().includes(buscaSKU.toLowerCase())
+);
+
 
 
   if (carregando) return <p className="loading">Carregando produtos...</p>;

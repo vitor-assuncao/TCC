@@ -7,15 +7,28 @@ const router = express.Router();
 // =====================
 // 🔹 LISTAR TODOS PRODUTOS
 // =====================
+// --- LISTAR PRODUTOS COM ESTOQUE ---
 router.get("/", async (req, res) => {
   try {
-    const [rows] = await connection.query("SELECT * FROM produtos");
+    const [rows] = await connection.query(`
+      SELECT 
+        p.id,
+        p.nome,
+        p.sku,
+        p.preco_unitario,
+        p.url_imagem, 
+        IFNULL(e.quantidade, 0) AS quantidade
+      FROM produtos p
+      LEFT JOIN estoque e ON e.produto_id = p.id
+    `);
+
     res.json(rows);
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);
     res.status(500).json({ message: "Erro ao buscar produtos." });
   }
 });
+
 
 
 // =====================
