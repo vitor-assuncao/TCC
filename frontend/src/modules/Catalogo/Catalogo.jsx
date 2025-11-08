@@ -9,7 +9,8 @@ const Catalogo = () => {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
   const [mensagem, setMensagem] = useState("");
-  const [mostrarCarrinho, setMostrarCarrinho] = useState(false); // 👈 controla visibilidade do carrinho
+  const [mostrarCarrinho, setMostrarCarrinho] = useState(false);
+  const [buscaSKU, setBuscaSKU] = useState(""); // 👈 novo estado para busca
 
   const { itens, adicionarItem, removerItem } = useContext(PedidoContext);
   const navigate = useNavigate();
@@ -54,11 +55,17 @@ const Catalogo = () => {
     setMostrarCarrinho((prev) => !prev);
   };
 
+  // 🔍 Filtragem por SKU
+  const produtosFiltrados = produtos.filter((produto) =>
+    produto.sku?.toLowerCase().includes(buscaSKU.toLowerCase())
+  );
+
   if (carregando) return <p className="loading">Carregando produtos...</p>;
   if (erro) return <p className="error">❌ {erro}</p>;
 
   return (
     <div className="catalogo-page">
+      {/* Cabeçalho */}
       <div className="catalogo-header">
         <h2>📦 Catálogo de Produtos</h2>
         <button className="btn-toggle-carrinho" onClick={toggleCarrinho}>
@@ -66,15 +73,25 @@ const Catalogo = () => {
         </button>
       </div>
 
+      {/* 🔍 Barra de busca */}
+      <div className="barra-pesquisa">
+        <input
+          type="text"
+          placeholder="Buscar por SKU..."
+          value={buscaSKU}
+          onChange={(e) => setBuscaSKU(e.target.value)}
+        />
+      </div>
+
       {mensagem && <div className="mensagem-sucesso">{mensagem}</div>}
 
       <div className="catalogo-main">
-        {/* Catálogo principal */}
+        {/* Lista de produtos */}
         <div className={`catalogo-grid ${mostrarCarrinho ? "com-carrinho" : "sem-carrinho"}`}>
-          {produtos.length === 0 ? (
-            <p>Nenhum produto cadastrado no momento.</p>
+          {produtosFiltrados.length === 0 ? (
+            <p>Nenhum produto encontrado para este SKU.</p>
           ) : (
-            produtos.map((produto) => {
+            produtosFiltrados.map((produto) => {
               let imagemUrl = "https://via.placeholder.com/150";
               if (produto.url_imagem) {
                 if (produto.url_imagem.includes("drive.google.com")) {
@@ -114,7 +131,7 @@ const Catalogo = () => {
           )}
         </div>
 
-        {/* Carrinho lateral visível apenas quando mostrarCarrinho = true */}
+        {/* Carrinho lateral */}
         {mostrarCarrinho && (
           <div className="pedido-sidebar">
             <h3>🧺 Produtos no Pedido</h3>

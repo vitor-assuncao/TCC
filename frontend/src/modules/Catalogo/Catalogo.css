@@ -166,3 +166,24 @@
 .com-carrinho {
   width: 75%;
 }
+
+
+.barra-pesquisa {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 20px;
+}
+
+.barra-pesquisa input {
+  width: 300px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.barra-pesquisa input:focus {
+  border-color: #5a67d8;
+}
