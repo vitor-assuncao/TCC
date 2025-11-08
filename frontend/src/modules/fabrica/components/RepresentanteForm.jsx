@@ -1,44 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { representanteService } from '../../../services/api';
-import './RepresentanteForm.css';
+import React, { useState, useEffect } from "react";
+import {
+  listarRepresentantes,
+  criarRepresentante,
+} from "../../../services/representanteService";
+import "./RepresentanteForm.css";
 
 const RepresentanteForm = () => {
-  const [formData, setFormData] = useState({
-    nome: '',
-    email: '',
-    telefone: '',
-    data_contratacao: ''
-  });
-
   const [representantes, setRepresentantes] = useState([]);
+  const [formData, setFormData] = useState({
+    nome: "",
+    email: "",
+    telefone: "",
+    data_contratacao: "",
+  });
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
 
-  // 🔄 Carregar representantes do banco ao abrir a página
+  // 🔹 Carrega os representantes assim que o componente monta
   useEffect(() => {
     carregarRepresentantes();
   }, []);
 
   const carregarRepresentantes = async () => {
     try {
-      const data = await representanteService.listarRepresentantes();
+      const data = await listarRepresentantes();
       setRepresentantes(data);
     } catch (error) {
-      console.error('Erro ao carregar representantes:', error);
-      setErro('Erro ao carregar representantes');
+      console.error("Erro ao carregar representantes:", error);
+      setErro("Erro ao carregar representantes");
     }
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.nome || !formData.email) {
-      alert('Nome e email são obrigatórios!');
+      alert("Nome e e-mail são obrigatórios!");
       return;
     }
 
@@ -46,13 +50,22 @@ const RepresentanteForm = () => {
     setErro(null);
 
     try {
-      await representanteService.criarRepresentante(formData);
-      alert('Representante cadastrado com sucesso!');
-      setFormData({ nome: '', email: '', telefone: '', data_contratacao: '' });
-      await carregarRepresentantes(); // Recarregar a lista
+      await criarRepresentante(formData);
+      alert("✅ Representante cadastrado com sucesso!");
+
+      // Limpa o formulário
+      setFormData({
+        nome: "",
+        email: "",
+        telefone: "",
+        data_contratacao: "",
+      });
+
+      // Recarrega a lista
+      await carregarRepresentantes();
     } catch (error) {
-      console.error('Erro no formulário:', error);
-      setErro('Erro ao cadastrar representante.');
+      console.error("Erro no formulário:", error);
+      setErro("Erro ao cadastrar representante.");
     } finally {
       setCarregando(false);
     }
@@ -60,84 +73,74 @@ const RepresentanteForm = () => {
 
   return (
     <div className="representante-form-container">
-      <h3>Adicionar Novo Representante</h3>
+      <h2>Cadastro de Representantes</h2>
 
-      {erro && <div className="error-message">{erro}</div>}
+      {erro && <p className="erro-msg">{erro}</p>}
 
       <form onSubmit={handleSubmit} className="representante-form">
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="nome">Nome *</label>
-            <input
-              type="text"
-              id="nome"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              required
-              placeholder="Ex: João Silva"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">E-mail *</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="joao@email.com"
-            />
-          </div>
+        <div className="form-group">
+          <label>Nome:</label>
+          <input
+            type="text"
+            name="nome"
+            value={formData.nome}
+            onChange={handleChange}
+            required
+          />
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="telefone">Telefone</label>
-            <input
-              type="text"
-              id="telefone"
-              name="telefone"
-              value={formData.telefone}
-              onChange={handleChange}
-              placeholder="(11) 99999-9999"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="data_contratacao">Data de Contratação</label>
-            <input
-              type="date"
-              id="data_contratacao"
-              name="data_contratacao"
-              value={formData.data_contratacao}
-              onChange={handleChange}
-            />
-          </div>
+        <div className="form-group">
+          <label>E-mail:</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
         </div>
 
-        <button type="submit" className="submit-button" disabled={carregando}>
-          {carregando ? 'Adicionando...' : 'Adicionar Representante'}
+        <div className="form-group">
+          <label>Telefone:</label>
+          <input
+            type="text"
+            name="telefone"
+            value={formData.telefone}
+            onChange={handleChange}
+            placeholder="(00) 00000-0000"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Data de Contratação:</label>
+          <input
+            type="date"
+            name="data_contratacao"
+            value={formData.data_contratacao}
+            onChange={handleChange}
+          />
+        </div>
+
+        <button type="submit" disabled={carregando}>
+          {carregando ? "Salvando..." : "Cadastrar Representante"}
         </button>
       </form>
 
-      {/* 📋 Lista de representantes */}
-      <div className="representantes-list">
-        <h4>Representantes Cadastrados</h4>
-        {representantes.length === 0 ? (
-          <p>Nenhum representante cadastrado.</p>
-        ) : (
-          <ul>
-            {representantes.map((rep) => (
-              <li key={rep.id}>
-                <strong>{rep.nome}</strong> — {rep.email} ({rep.telefone || 'sem telefone'})
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <hr />
+
+      <h3>📋 Lista de Representantes</h3>
+      {representantes.length === 0 ? (
+        <p>Nenhum representante cadastrado ainda.</p>
+      ) : (
+        <ul className="representantes-lista">
+          {representantes.map((rep) => (
+            <li key={rep.id}>
+              <strong>{rep.nome}</strong> — {rep.email}
+              {rep.telefone && <> — {rep.telefone}</>}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

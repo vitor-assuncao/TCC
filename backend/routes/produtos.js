@@ -1,127 +1,143 @@
-import express from 'express';
-import pool from '../db.js';
+import express from "express";
+import connection from "../db.js"; // ajuste o caminho se necessário
 
 const router = express.Router();
 
-/* =======================================
-   [POST] - Criar novo produto
-   ======================================= */
-router.post('/', async (req, res) => {
-  const { nome, descricao, sku, unidade_medida, url_imagem, preco_unitario = 0 } = req.body;
 
-  const connection = await pool.getConnection();
-  await connection.beginTransaction();
-
+// =====================
+// 🔹 LISTAR TODOS PRODUTOS
+// =====================
+// --- LISTAR PRODUTOS COM ESTOQUE ---
+router.get("/", async (req, res) => {
   try {
-    // Inserir produto
-    const [produtoResult] = await connection.query(
-      `INSERT INTO produtos 
-        (nome, descricao, sku, unidade_medida, url_imagem, preco_unitario) 
-        VALUES (?, ?, ?, ?, ?, ?)`,
-      [nome, descricao, sku, unidade_medida, url_imagem, preco_unitario]
-    );
-
-    const produtoId = produtoResult.insertId;
-
-    // Inserir no estoque com quantidade inicial 0
-    await connection.query(
-      'INSERT INTO estoque (produto_id, quantidade) VALUES (?, 0)',
-      [produtoId]
-    );
-
-    await connection.commit();
-
-    res.status(201).json({
-      id: produtoId,
-      nome,
-      descricao,
-      sku,
-      unidade_medida,
-      preco_unitario,
-      url_imagem,
-      message: 'Produto criado e adicionado ao estoque com sucesso!',
-    });
-
-  } catch (error) {
-    await connection.rollback();
-    console.error('Erro ao criar produto e inserir no estoque:', error);
-    res.status(500).json({ error: 'Erro ao criar produto e inserir no estoque' });
-  } finally {
-    connection.release();
-  }
-});
-
-/* =======================================
-   [GET] - Listar todos os produtos
-   ======================================= */
-router.get('/', async (req, res) => {
-  try {
-    const [rows] = await pool.query(`
-      SELECT p.*, e.quantidade 
+    const [rows] = await connection.query(`
+      SELECT 
+        p.id,
+        p.nome,
+        p.sku,
+        p.preco_unitario,
+        p.url_imagem, 
+        IFNULL(e.quantidade, 0) AS quantidade
       FROM produtos p
       LEFT JOIN estoque e ON e.produto_id = p.id
     `);
+
     res.json(rows);
   } catch (error) {
-    console.error('Erro ao buscar produtos:', error);
-    res.status(500).json({ error: 'Erro ao buscar produtos' });
+    console.error("Erro ao buscar produtos:", error);
+    res.status(500).json({ message: "Erro ao buscar produtos." });
   }
 });
 
-/* =======================================
-   [PUT] - Atualizar o preço do produto
-   ======================================= */
-router.put('/:id/preco', async (req, res) => {
-  const { id } = req.params;
-  const { preco } = req.body;
 
-  if (preco == null || isNaN(preco)) {
-    return res.status(400).json({ error: 'Preço inválido' });
+
+// =====================
+// 🔹 CRIAR NOVO PRODUTO
+// =====================
+router.post("/", async (req, res) => {
+  const { nome, sku, preco_unitario, quantidade } = req.body;
+
+  if (!nome || !sku) {
+    return res.status(400).json({ message: "Nome e SKU são obrigatórios." });
   }
 
   try {
-    const [result] = await pool.query(
-      'UPDATE produtos SET preco_unitario = ?, data_atualizacao = CURRENT_TIMESTAMP WHERE id = ?',
-      [preco, id]
+    const [result] = await connection.query(
+      "INSERT INTO produtos (nome, sku, preco_unitario, quantidade) VALUES (?, ?, ?, ?)",
+      [nome, sku, preco_unitario || 0, quantidade || 0]
     );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: 'Produto não encontrado' });
-    }
-
-    res.json({ message: 'Preço atualizado com sucesso!' });
+    res.status(201).json({ id: result.insertId, message: "Produto criado com sucesso!" });
   } catch (error) {
-    console.error('Erro ao atualizar preço do produto:', error);
-    res.status(500).json({ error: 'Erro ao atualizar preço do produto' });
+    console.error("Erro ao criar produto:", error);
+    res.status(500).json({ message: "Erro ao criar produto." });
   }
 });
 
-/* =======================================
-   [PUT] - Atualizar a quantidade no estoque
-   ======================================= */
-router.put('/:id/estoque', async (req, res) => {
+
+// =====================
+// 🔹 ATUALIZAR QUANTIDADE
+// =====================
+router.put("/estoque/:id", async (req, res) => {
   const { id } = req.params;
   const { quantidade } = req.body;
 
-  if (quantidade == null || isNaN(quantidade)) {
-    return res.status(400).json({ error: 'Quantidade inválida' });
+  if (quantidade == null) {
+    return res.status(400).json({ message: "Quantidade é obrigatória." });
   }
 
   try {
-    const [result] = await pool.query(
-      'UPDATE estoque SET quantidade = ?, data_atualizacao = CURRENT_TIMESTAMP WHERE produto_id = ?',
+    const [result] = await connection.query(
+      "UPDATE produtos SET quantidade = ? WHERE id = ?",
       [quantidade, id]
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ error: 'Produto não encontrado no estoque' });
+      return res.status(404).json({ message: "Produto não encontrado." });
     }
 
-    res.json({ message: 'Quantidade de estoque atualizada com sucesso!' });
+    res.json({ message: "Quantidade atualizada com sucesso!" });
   } catch (error) {
-    console.error('Erro ao atualizar estoque:', error);
-    res.status(500).json({ error: 'Erro ao atualizar estoque' });
+    console.error("Erro ao atualizar quantidade:", error);
+    res.status(500).json({ message: "Erro ao atualizar quantidade." });
   }
 });
+
+
+// =====================
+// 🔹 ATUALIZAR PREÇO
+// =====================
+router.put("/:id/preco", async (req, res) => {
+  const { id } = req.params;
+  const { preco_unitario } = req.body;
+
+  if (preco_unitario == null) {
+    return res.status(400).json({ message: "Preço é obrigatório." });
+  }
+
+  try {
+    const [result] = await connection.query(
+      "UPDATE produtos SET preco_unitario = ? WHERE id = ?",
+      [preco_unitario, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Produto não encontrado." });
+    }
+
+    res.json({ message: "Preço atualizado com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao atualizar preço:", error);
+    res.status(500).json({ message: "Erro ao atualizar preço." });
+  }
+});
+
+
+// =====================
+// 🔹 DELETAR PRODUTO
+// =====================
+// --- DELETAR PRODUTO ---
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Verifica se o produto existe
+    const [rows] = await connection.query("SELECT * FROM produtos WHERE id = ?", [id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Produto não encontrado." });
+    }
+
+    // Remove o item do estoque primeiro (respeitando a foreign key)
+    await connection.query("DELETE FROM estoque WHERE produto_id = ?", [id]);
+
+    // Agora remove o produto
+    await connection.query("DELETE FROM produtos WHERE id = ?", [id]);
+
+    res.status(200).json({ message: "Produto e estoque removidos com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao remover produto:", error);
+    res.status(500).json({ message: "Erro ao remover o produto." });
+  }
+});
+
 
 export default router;
