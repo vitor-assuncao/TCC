@@ -115,3 +115,54 @@
   text-align: center;
   font-size: 15px;
 }
+
+.catalogo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.btn-voltar-menu {
+  background-color: #ccc;
+  color: #333;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-voltar-menu:hover {
+  background-color: #b0b0b0;
+}
+
+
+.btn-toggle-carrinho {
+  background-color: #5a67d8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-toggle-carrinho:hover {
+  background-color: #434190;
+}
+
+.pedido-sidebar {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Caso queira ajustar layout quando carrinho estiver escondido */
+.sem-carrinho {
+  width: 100%;
+}
+
+.com-carrinho {
+  width: 75%;
+}

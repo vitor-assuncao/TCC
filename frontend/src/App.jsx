@@ -6,6 +6,7 @@ import FabricaPage from './pages/FabricaPage';
 import RepresentantePage from './pages/RepresentantePage';
 import PedidoProvider from './modules/pedidos/PedidoProvider';
 import PedidoForm from './modules/pedidos/PedidoForm';
+import Catalogo from "./modules/Catalogo/Catalogo";
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
             <Route path="/" element={<HomeScreen />} />
             <Route path="/fabrica" element={<FabricaPage />} />
             <Route path="/representante" element={<RepresentantePage />} />
-            <Route path="/pedido" element={<PedidoForm representanteId={1} />} />
+            <Route path="/catalogo" element={<Catalogo />} />
+            <Route path="/pedido" element={<PedidoForm />} />
           </Routes>
         </div>
       </Router>

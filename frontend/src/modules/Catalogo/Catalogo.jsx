@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import PedidoContext from "../pedidos/PedidoContext";
-import api from '../../services/api';
+import api from "../../services/api";
 import "./Catalogo.css";
 
 const Catalogo = () => {
@@ -9,6 +9,7 @@ const Catalogo = () => {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
   const [mensagem, setMensagem] = useState("");
+  const [mostrarCarrinho, setMostrarCarrinho] = useState(false); // 👈 controla visibilidade do carrinho
 
   const { itens, adicionarItem, removerItem } = useContext(PedidoContext);
   const navigate = useNavigate();
@@ -36,14 +37,21 @@ const Catalogo = () => {
     adicionarItem({
       id: produto.id,
       nome: produto.nome,
-      preco: produto.preco_unitario,
+      preco_unitario: produto.preco_unitario,
+      preco_total: produto.preco_unitario,
+      produto_id: produto.id,
+      quantidade: 1,
     });
     setMensagem(`✅ ${produto.nome} adicionado ao pedido`);
     setTimeout(() => setMensagem(""), 2500);
   };
 
   const handleFinalizar = () => {
-    navigate("/pedido"); // Redireciona para o PedidoForm
+    navigate("/pedido");
+  };
+
+  const toggleCarrinho = () => {
+    setMostrarCarrinho((prev) => !prev);
   };
 
   if (carregando) return <p className="loading">Carregando produtos...</p>;
@@ -51,12 +59,18 @@ const Catalogo = () => {
 
   return (
     <div className="catalogo-page">
-      {/* 🟢 Mensagem de sucesso */}
+      <div className="catalogo-header">
+        <h2>📦 Catálogo de Produtos</h2>
+        <button className="btn-toggle-carrinho" onClick={toggleCarrinho}>
+          {mostrarCarrinho ? "❌ Ocultar Carrinho" : "🧾 Mostrar Carrinho"}
+        </button>
+      </div>
+
       {mensagem && <div className="mensagem-sucesso">{mensagem}</div>}
 
       <div className="catalogo-main">
-        {/* 🧩 Catálogo principal */}
-        <div className="catalogo-grid">
+        {/* Catálogo principal */}
+        <div className={`catalogo-grid ${mostrarCarrinho ? "com-carrinho" : "sem-carrinho"}`}>
           {produtos.length === 0 ? (
             <p>Nenhum produto cadastrado no momento.</p>
           ) : (
@@ -100,41 +114,43 @@ const Catalogo = () => {
           )}
         </div>
 
-        {/* 🧺 Carrinho lateral */}
-        <div className="pedido-sidebar">
-          <h3>🧾 Produtos no Pedido</h3>
-          {itens.length === 0 ? (
-            <p className="vazio">Nenhum produto adicionado.</p>
-          ) : (
-            <>
-              <ul className="lista-pedido">
-                {itens.map((item) => (
-                  <li key={item.produto_id} className="item-pedido">
-                    <span>{item.nome}</span>
-                    <span>R$ {item.preco_unitario.toFixed(2)}</span>
-                    <button onClick={() => removerItem(item.produto_id)}>❌</button>
-                  </li>
-                ))}
-              </ul>
+        {/* Carrinho lateral visível apenas quando mostrarCarrinho = true */}
+        {mostrarCarrinho && (
+          <div className="pedido-sidebar">
+            <h3>🧺 Produtos no Pedido</h3>
+            {itens.length === 0 ? (
+              <p className="vazio">Nenhum produto adicionado.</p>
+            ) : (
+              <>
+                <ul className="lista-pedido">
+                  {itens.map((item) => (
+                    <li key={item.produto_id} className="item-pedido">
+                      <span>{item.nome}</span>
+                      <span>R$ {item.preco_unitario.toFixed(2)}</span>
+                      <button onClick={() => removerItem(item.produto_id)}>❌</button>
+                    </li>
+                  ))}
+                </ul>
 
-              <div className="resumo-pedido">
-                <p>
-                  <strong>Total:</strong> R${" "}
-                  {itens
-                    .reduce((acc, item) => acc + item.preco_total, 0)
-                    .toFixed(2)}
-                </p>
-                <button
-                  className="finalizar-btn"
-                  onClick={handleFinalizar}
-                  disabled={itens.length === 0}
-                >
-                  🟢 Finalizar Pedido
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+                <div className="resumo-pedido">
+                  <p>
+                    <strong>Total:</strong> R${" "}
+                    {itens
+                      .reduce((acc, item) => acc + item.preco_total, 0)
+                      .toFixed(2)}
+                  </p>
+                  <button
+                    className="finalizar-btn"
+                    onClick={handleFinalizar}
+                    disabled={itens.length === 0}
+                  >
+                    🟢 Finalizar Pedido
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

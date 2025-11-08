@@ -123,3 +123,53 @@
   margin-top: 8px;
   color: #333;
 }
+
+.pedido-form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f8f8f8;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.pedido-form .form-group {
+  margin-bottom: 15px;
+}
+
+.pedido-form input,
+.pedido-form textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.botoes-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.botoes-container button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.botoes-container button[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+}
+
+.botoes-container .botao-voltar {
+  background-color: #ccc;
+  color: #333;
+}
+
+.botoes-container .botao-voltar:hover {
+  background-color: #b0b0b0;
+}
