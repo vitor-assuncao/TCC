@@ -1,40 +1,41 @@
-// src/hooks/useProdutos.js
-import { useState } from 'react';
-import { produtoService } from '../services/api';
+import { useState, useEffect } from "react";
+import { listarProdutos, criarProduto } from "../services/produtoService";
 
-export const useProdutos = () => {
+export function useProdutos() {
   const [produtos, setProdutos] = useState([]);
   const [carregando, setCarregando] = useState(false);
-  const [erro, setErro] = useState('');
+  const [erro, setErro] = useState(null);
 
-  // Adicionar novo produto
-  const adicionarProduto = async (produtoData) => {
-    setCarregando(true);
-    setErro('');
-    
+  // 🔹 Carrega produtos ao montar o componente
+  useEffect(() => {
+    carregarProdutos();
+  }, []);
+
+  // 🔹 Busca produtos do backend
+  const carregarProdutos = async () => {
     try {
-      const novoProduto = await produtoService.criarProduto(produtoData);
-      setProdutos(prev => [...prev, novoProduto]);
-      setCarregando(false);
-      return novoProduto; // Retorna o produto criado para feedback
+      setCarregando(true);
+      const data = await listarProdutos();
+      setProdutos(data);
+      setErro(null);
     } catch (error) {
-      setErro(error.message);
+      console.error("Erro ao carregar produtos:", error);
+      setErro("Erro ao carregar produtos.");
+    } finally {
       setCarregando(false);
-      throw error; // Propaga o erro para o componente
     }
   };
 
-  // Buscar produtos (para futuro uso)
-  const buscarProdutos = async () => {
-    setCarregando(true);
-    setErro('');
-    
+  // 🔹 Adiciona novo produto
+  const adicionarProduto = async (novoProduto) => {
     try {
-      const listaProdutos = await produtoService.listarProdutos();
-      setProdutos(listaProdutos);
-      setCarregando(false);
+      setCarregando(true);
+      await criarProduto(novoProduto);
+      await carregarProdutos(); // atualiza lista
     } catch (error) {
-      setErro(error.message);
+      console.error("Erro ao adicionar produto:", error);
+      setErro("Erro ao adicionar produto.");
+    } finally {
       setCarregando(false);
     }
   };
@@ -43,7 +44,7 @@ export const useProdutos = () => {
     produtos,
     carregando,
     erro,
+    carregarProdutos,
     adicionarProduto,
-    buscarProdutos
   };
-};
+}

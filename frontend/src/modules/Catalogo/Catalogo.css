@@ -1,8 +1,20 @@
+.catalogo-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.catalogo-main {
+  display: flex;
+  gap: 25px;
+}
+
+/* catálogo principal */
 .catalogo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 20px;
-  margin-top: 20px;
+  flex: 3;
 }
 
 .catalogo-card {
@@ -25,16 +37,81 @@
   margin-bottom: 10px;
 }
 
-.produto-info {
-  text-align: left;
+/* Sidebar (pedido atual) */
+.pedido-sidebar {
+  flex: 1;
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  max-width: 320px;
+  height: fit-content;
 }
 
-.produto-info h3 {
-  margin-bottom: 5px;
+.lista-pedido {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
 }
 
-.preco {
-  font-weight: bold;
-  color: #0078d4;
-  margin-top: 8px;
+.item-pedido {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+}
+
+.item-pedido button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.resumo-pedido {
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+  text-align: right;
+}
+
+.finalizar-btn {
+  width: 100%;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.finalizar-btn:hover {
+  background-color: #1e7e34;
+}
+
+.finalizar-btn:disabled {
+  background-color: #b0b0b0;
+  cursor: not-allowed;
+}
+
+.vazio {
+  color: #777;
+  font-style: italic;
+  text-align: center;
+}
+
+.mensagem-sucesso {
+  background-color: #e6f4ea;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 15px;
 }

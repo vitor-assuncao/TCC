@@ -5,6 +5,7 @@ import HomeScreen from './pages/HomeScreen';
 import FabricaPage from './pages/FabricaPage';
 import RepresentantePage from './pages/RepresentantePage';
 import PedidoProvider from './modules/pedidos/PedidoProvider';
+import PedidoForm from './modules/pedidos/PedidoForm';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<HomeScreen />} />
             <Route path="/fabrica" element={<FabricaPage />} />
             <Route path="/representante" element={<RepresentantePage />} />
+            <Route path="/pedido" element={<PedidoForm representanteId={1} />} />
           </Routes>
         </div>
       </Router>
