@@ -34,7 +34,6 @@ const FabricaPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ preco_unitario: parseFloat(novoPreco) }),
       });
-
       alert('Preço atualizado com sucesso!');
     } catch (error) {
       console.error('Erro ao atualizar preço:', error);
@@ -102,6 +101,11 @@ const FabricaPage = () => {
     await adicionarProduto(produtoData);
   };
 
+  // --- REDIRECIONAR PARA TELA DE PEDIDOS ---
+  const irParaPedidos = () => {
+    navigate('/fabrica-pedidos');
+  };
+
   return (
     <div className="fabrica-container">
       <header className="fabrica-header">
@@ -130,6 +134,13 @@ const FabricaPage = () => {
             onClick={() => setActiveTab('representantes')}
           >
             🧑‍💼 Representantes
+          </button>
+          {/* ✅ NOVA ABA DE PEDIDOS */}
+          <button
+            className={activeTab === 'pedidos' ? 'active' : ''}
+            onClick={() => irParaPedidos()}
+          >
+            📋 Pedidos
           </button>
         </nav>
 
@@ -179,8 +190,6 @@ const FabricaPage = () => {
                       <tr key={produto.id}>
                         <td>{produto.nome}</td>
                         <td>{produto.sku}</td>
-
-                        {/* Campo de quantidade editável */}
                         <td>
                           <input
                             type="number"
@@ -197,8 +206,6 @@ const FabricaPage = () => {
                             style={{ width: '80px', textAlign: 'center' }}
                           />
                         </td>
-
-                        {/* Campo de preço editável */}
                         <td>
                           <input
                             type="number"
@@ -209,8 +216,6 @@ const FabricaPage = () => {
                             style={{ width: '90px', textAlign: 'right' }}
                           />
                         </td>
-
-                        {/* Botões de ação */}
                         <td style={{ display: 'flex', gap: '8px' }}>
                           <button
                             onClick={() => {

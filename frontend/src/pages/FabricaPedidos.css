@@ -1,0 +1,32 @@
+.fabrica-pedidos {
+  padding: 20px;
+  font-family: "Inter", sans-serif;
+}
+
+.fabrica-pedidos table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.fabrica-pedidos th,
+.fabrica-pedidos td {
+  border: 1px solid #e5e7eb;
+  padding: 10px;
+  text-align: center;
+}
+
+.fabrica-pedidos th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+select {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px;
+  font-size: 14px;
+}

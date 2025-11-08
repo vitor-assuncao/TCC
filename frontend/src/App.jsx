@@ -7,6 +7,7 @@ import RepresentantePage from './pages/RepresentantePage';
 import PedidoProvider from './modules/pedidos/PedidoProvider';
 import PedidoForm from './modules/pedidos/PedidoForm';
 import Catalogo from "./modules/Catalogo/Catalogo";
+import FabricaPedidos from './pages/FabricaPedidos';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/representante" element={<RepresentantePage />} />
             <Route path="/catalogo" element={<Catalogo />} />
             <Route path="/pedido" element={<PedidoForm />} />
+            <Route path="/fabrica-pedidos" element={<FabricaPedidos />} />
           </Routes>
         </div>
       </Router>
