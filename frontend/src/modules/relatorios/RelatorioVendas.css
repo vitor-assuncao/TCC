@@ -1,0 +1,55 @@
+.relatorio-container {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Inter", sans-serif;
+}
+
+.filtro-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filtro-container label {
+  font-weight: 600;
+}
+
+.filtro-container select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.filtro-container button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.filtro-container button:hover {
+  background-color: #1d4ed8;
+}
+
+.relatorio-tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.relatorio-tabela th,
+.relatorio-tabela td {
+  border: 1px solid #e5e7eb;
+  padding: 10px;
+  text-align: center;
+}
+
+.relatorio-tabela th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}

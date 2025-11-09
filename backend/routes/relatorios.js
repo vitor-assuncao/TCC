@@ -1,13 +1,14 @@
-// backend/routes/relatorios.js
 import express from "express";
 import pool from "../db.js";
 
 const router = express.Router();
 
-// [GET] - Relatório de vendas por representante
+// ✅ Relatório de vendas por representante
 router.get("/vendas-representante", async (req, res) => {
+  const { representante_id } = req.query;
+
   try {
-    const [rows] = await pool.query(`
+    let query = `
       SELECT 
         representante_id,
         representante_nome,
@@ -17,13 +18,24 @@ router.get("/vendas-representante", async (req, res) => {
         meta_vendas,
         ROUND(percentual_atingimento_meta, 2) AS percentual_atingimento_meta
       FROM relatorio_vendas_representante
-      ORDER BY periodo DESC, representante_nome ASC;
-    `);
+    `;
+
+    const params = [];
+
+    // se foi passado um representante, filtra
+    if (representante_id) {
+      query += " WHERE representante_id = ?";
+      params.push(representante_id);
+    }
+
+    query += " ORDER BY periodo DESC";
+
+    const [rows] = await pool.query(query, params);
 
     res.json(rows);
   } catch (error) {
-    console.error("Erro ao gerar relatório de vendas por representante:", error);
-    res.status(500).json({ error: "Erro ao gerar relatório de vendas" });
+    console.error("Erro ao gerar relatório:", error);
+    res.status(500).json({ error: "Erro ao gerar relatório" });
   }
 });
 

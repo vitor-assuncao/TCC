@@ -142,6 +142,12 @@ const FabricaPage = () => {
           >
             📋 Pedidos
           </button>
+          <button
+            className={activeTab === 'metas' ? 'active' : ''}
+            onClick={() => navigate('/fabrica-metas')}
+          >
+            🎯 Metas
+          </button>
         </nav>
 
         <div className="tab-content">

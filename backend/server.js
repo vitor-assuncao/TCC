@@ -8,6 +8,7 @@ import representanteRoutes from './routes/representantes.js';
 import clientesRoutes from "./routes/clientes.js";
 import pedidosRoutes from './routes/pedidos.js';
 import relatoriosRoutes from "./routes/relatorios.js";
+import metasRoutes from "./routes/metas.js";
 
 
 const app = express();
@@ -34,6 +35,7 @@ app.use('/api/representantes',representanteRoutes );
 app.use("/api/clientes", clientesRoutes);
 app.use('/api/pedidos', pedidosRoutes);
 app.use("/api/relatorios", relatoriosRoutes);
+app.use("/api/metas", metasRoutes);
 
 
 app.get('/', (req, res) => {
