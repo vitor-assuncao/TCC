@@ -8,6 +8,8 @@ import PedidoProvider from './modules/pedidos/PedidoProvider';
 import PedidoForm from './modules/pedidos/PedidoForm';
 import Catalogo from "./modules/Catalogo/Catalogo";
 import FabricaPedidos from './pages/FabricaPedidos';
+import RelatorioVendas from "./modules/relatorios/RelatorioVendas";
+import FabricaMetas from "./modules/fabrica/components/FabricaMetas";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
             <Route path="/catalogo" element={<Catalogo />} />
             <Route path="/pedido" element={<PedidoForm />} />
             <Route path="/fabrica-pedidos" element={<FabricaPedidos />} />
+            <Route path="/relatorio-vendas" element={<RelatorioVendas />} />
+            <Route path="/fabrica-metas" element={<FabricaMetas />} />
           </Routes>
         </div>
       </Router>

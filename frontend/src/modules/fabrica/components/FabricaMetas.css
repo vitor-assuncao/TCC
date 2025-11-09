@@ -1,0 +1,55 @@
+.metas-container {
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.metas-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.metas-form label {
+  display: block;
+  font-weight: 600;
+}
+
+.metas-form input,
+.metas-form select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.metas-form button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.metas-form button:hover {
+  background-color: #1d4ed8;
+}
+
+.metas-tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.metas-tabela th,
+.metas-tabela td {
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+  text-align: center;
+}
+
+.metas-tabela th {
+  background-color: #f3f4f6;
+}

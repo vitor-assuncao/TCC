@@ -22,6 +22,12 @@ const RepresentantePage = () => {
         >
           {mostrarFormCliente ? "❌ Fechar Cadastro" : "➕ Cadastrar Cliente"}
         </button>
+        <button
+            className="btn-relatorio"
+            onClick={() => navigate("/relatorio-vendas")}
+          >
+            📊 Ver Relatório de Vendas
+          </button>
       </header>
 
       <main className="representante-content">

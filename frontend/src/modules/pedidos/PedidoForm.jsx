@@ -76,32 +76,59 @@ const PedidoForm = () => {
   };
 
   // enviar pedido para o backend
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (
-      !pedido.cliente_id ||
-      !pedido.representante_id ||
-      (pedido.itens || []).length === 0
-    ) {
-      alert("Preencha cliente, representante e adicione ao menos um produto.");
-      return;
-    }
+// dentro do componente PedidoForm
 
-    setCarregando(true);
-    setMensagem("");
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      await api.post("/pedidos", pedido);
-      setMensagem("✅ Pedido criado com sucesso!");
-      localStorage.removeItem("carrinho_pedido");
-      setTimeout(() => navigate("/representante"), 1200);
-    } catch (err) {
-      console.error(err);
-      setMensagem("❌ Erro ao criar pedido.");
-    } finally {
-      setCarregando(false);
-    }
+  // validações básicas
+  if (!pedido.cliente_id || !pedido.representante_id) {
+    alert("Selecione cliente e representante.");
+    return;
+  }
+  if (!pedido.itens || pedido.itens.length === 0) {
+    alert("Nenhum produto adicionado ao pedido.");
+    return;
+  }
+
+  // monta o payload exatamente como o backend espera
+  const produtos = (pedido.itens || [])
+    .filter((it) => it && (it.produto_id || it.id) && Number(it.quantidade) > 0)
+    .map((it) => ({
+      produto_id: Number(it.produto_id || it.id), // tolera id vindo do catálogo
+      quantidade: Number(it.quantidade),
+      preco_unitario: Number(it.preco_unitario || 0),
+    }));
+
+  const body = {
+    cliente_id: Number(pedido.cliente_id),
+    representante_id: Number(pedido.representante_id),
+    condicao_pagamento: pedido.condicao_pagamento || null,
+    observacoes: pedido.observacoes || null,
+    // opcional mandar o total, o back recalcula de qualquer jeito
+    valor_total: Number(
+      produtos.reduce((acc, it) => acc + it.quantidade * it.preco_unitario, 0)
+    ),
+    produtos, // <- nome padronizado para o backend
   };
+
+  console.log("🚀 Enviando pedido:", body);
+
+  try {
+    await api.post("/pedidos", body); // se seu api tem baseURL com /api, deixe só "/pedidos"
+    alert("Pedido criado com sucesso!");
+    // limpar carrinho local/storage se você usa
+    localStorage.removeItem("carrinho_pedido");
+    // redirecionar se quiser
+    // navigate("/representante");
+  } catch (error) {
+    console.error("Erro ao criar pedido:", error?.response?.data || error);
+    alert(
+      "Erro ao criar pedido. " +
+        (error?.response?.data?.error || "Verifique os dados e tente novamente.")
+    );
+  }
+};
 
   return (
     <div className="pedido-form-container">

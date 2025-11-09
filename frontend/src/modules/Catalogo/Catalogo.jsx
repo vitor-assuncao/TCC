@@ -48,8 +48,17 @@ const Catalogo = () => {
   };
 
   const handleFinalizar = () => {
-    navigate("/pedido");
-  };
+  if (itens.length === 0) {
+    alert("Nenhum produto adicionado ao pedido!");
+    return;
+  }
+
+  // Salva os itens no localStorage
+  localStorage.setItem("carrinho_pedido", JSON.stringify(itens));
+
+  navigate("/pedido", { state: { itensSelecionados: itens } });
+};
+
 
   const toggleCarrinho = () => {
     setMostrarCarrinho((prev) => !prev);
