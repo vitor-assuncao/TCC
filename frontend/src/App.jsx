@@ -10,6 +10,7 @@ import Catalogo from "./modules/Catalogo/Catalogo";
 import FabricaPedidos from './pages/FabricaPedidos';
 import RelatorioVendas from "./modules/relatorios/RelatorioVendas";
 import FabricaMetas from "./modules/fabrica/components/FabricaMetas";
+import Login from "./modules/autentificação/Login"
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/fabrica-pedidos" element={<FabricaPedidos />} />
             <Route path="/relatorio-vendas" element={<RelatorioVendas />} />
             <Route path="/fabrica-metas" element={<FabricaMetas />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
         </div>
       </Router>

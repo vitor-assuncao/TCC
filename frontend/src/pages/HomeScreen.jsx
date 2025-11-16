@@ -11,7 +11,7 @@ const HomeScreen = () => {
   };
 
   const handleRepresentanteClick = () => {
-    navigate('/representante');
+    navigate('/login');
   };
 
   return (

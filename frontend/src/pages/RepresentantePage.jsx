@@ -6,6 +6,13 @@ import api from "../services/api";
 import "./RepresentantePage.css";
 
 const RepresentantePage = () => {
+  // 🔒 VALIDAÇÃO DE LOGIN (Forma 1)
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (!usuario) {
+    window.location.href = "/login";
+    return null; // impede renderização até redirecionar
+  }
+
   const [mostrarFormCliente, setMostrarFormCliente] = useState(false);
   const navigate = useNavigate();
 
@@ -22,12 +29,13 @@ const RepresentantePage = () => {
         >
           {mostrarFormCliente ? "❌ Fechar Cadastro" : "➕ Cadastrar Cliente"}
         </button>
+
         <button
-            className="btn-relatorio"
-            onClick={() => navigate("/relatorio-vendas")}
-          >
-            📊 Ver Relatório de Vendas
-          </button>
+          className="btn-relatorio"
+          onClick={() => navigate("/relatorio-vendas")}
+        >
+          📊 Ver Relatório de Vendas
+        </button>
       </header>
 
       <main className="representante-content">

@@ -10,13 +10,13 @@ const RepresentanteForm = () => {
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
+    cpf: "",
     telefone: "",
     data_contratacao: "",
   });
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
 
-  // 🔹 Carrega os representantes assim que o componente monta
   useEffect(() => {
     carregarRepresentantes();
   }, []);
@@ -41,8 +41,8 @@ const RepresentanteForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.nome || !formData.email) {
-      alert("Nome e e-mail são obrigatórios!");
+    if (!formData.nome || !formData.email || !formData.cpf) {
+      alert("Nome, e-mail e CPF são obrigatórios!");
       return;
     }
 
@@ -53,15 +53,14 @@ const RepresentanteForm = () => {
       await criarRepresentante(formData);
       alert("✅ Representante cadastrado com sucesso!");
 
-      // Limpa o formulário
       setFormData({
         nome: "",
         email: "",
+        cpf: "",
         telefone: "",
         data_contratacao: "",
       });
 
-      // Recarrega a lista
       await carregarRepresentantes();
     } catch (error) {
       console.error("Erro no formulário:", error);
@@ -101,6 +100,18 @@ const RepresentanteForm = () => {
         </div>
 
         <div className="form-group">
+          <label>CPF:</label>
+          <input
+            type="text"
+            name="cpf"
+            value={formData.cpf}
+            onChange={handleChange}
+            placeholder="000.000.000-00"
+            required
+          />
+        </div>
+
+        <div className="form-group">
           <label>Telefone:</label>
           <input
             type="text"
@@ -135,7 +146,7 @@ const RepresentanteForm = () => {
         <ul className="representantes-lista">
           {representantes.map((rep) => (
             <li key={rep.id}>
-              <strong>{rep.nome}</strong> — {rep.email}
+              <strong>{rep.nome}</strong> — {rep.email} — CPF: {rep.cpf}
               {rep.telefone && <> — {rep.telefone}</>}
             </li>
           ))}
