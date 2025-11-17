@@ -1,33 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./ClienteForm.css";
 
 const ClienteForm = () => {
+  // 🔒 PROTEÇÃO DE LOGIN
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (!usuario) {
+    window.location.href = "/login";
+    return null;
+  }
+
   const [formData, setFormData] = useState({
     nome: "",
     documento: "",
     email: "",
     telefone: "",
     endereco: "",
-    representante_id: "",
+    representante_id: usuario.id, // ⬅️ REPRESENTANTE DEFINIDO AUTOMATICAMENTE
   });
 
-  const [representantes, setRepresentantes] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
-
-  // 🔹 Buscar representantes existentes
-  useEffect(() => {
-    const fetchRepresentantes = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/api/representantes");
-        const data = await response.json();
-        setRepresentantes(data);
-      } catch (error) {
-        console.error("Erro ao carregar representantes:", error);
-      }
-    };
-    fetchRepresentantes();
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,14 +41,17 @@ const ClienteForm = () => {
       if (!response.ok) throw new Error("Erro ao cadastrar cliente");
 
       alert("✅ Cliente cadastrado com sucesso!");
+
+      // limpa o form mas mantém o representante_id preenchido
       setFormData({
         nome: "",
         documento: "",
         email: "",
         telefone: "",
         endereco: "",
-        representante_id: "",
+        representante_id: usuario.id,
       });
+
     } catch (error) {
       setErro(error.message);
     } finally {
@@ -70,6 +65,7 @@ const ClienteForm = () => {
       {erro && <p className="error">❌ {erro}</p>}
 
       <form onSubmit={handleSubmit}>
+
         <div className="form-row">
           <div className="form-group">
             <label>Nome *</label>
@@ -126,21 +122,7 @@ const ClienteForm = () => {
           />
         </div>
 
-        <div className="form-group">
-          <label>Representante Responsável</label>
-          <select
-            name="representante_id"
-            value={formData.representante_id}
-            onChange={handleChange}
-          >
-            <option value="">Selecione...</option>
-            {representantes.map((rep) => (
-              <option key={rep.id} value={rep.id}>
-                {rep.nome}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* 🔥 REPRESENTANTE FOI REMOVIDO — AGORA É AUTOMÁTICO */}
 
         <button type="submit" disabled={carregando}>
           {carregando ? "Cadastrando..." : "Cadastrar Cliente"}

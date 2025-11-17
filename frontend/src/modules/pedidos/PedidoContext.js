@@ -4,7 +4,7 @@ const PedidoContext = createContext({
   itens: [],
   adicionarItem: () => {},
   removerItem: () => {},
-  limparPedido: () => {},
+  limparCarrinho: () => {},
 });
 
 export default PedidoContext;
