@@ -7,7 +7,7 @@ const HomeScreen = () => {
   const navigate = useNavigate();
 
   const handleFabricaClick = () => {
-    navigate('/fabrica');
+    navigate('/fabrica-login');
   };
 
   const handleRepresentanteClick = () => {

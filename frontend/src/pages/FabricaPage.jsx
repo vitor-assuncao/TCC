@@ -6,6 +6,14 @@ import RepresentanteForm from '../modules/fabrica/components/RepresentanteForm';
 import './FabricaPage.css';
 
 const FabricaPage = () => {
+
+  const admin = JSON.parse(localStorage.getItem("fabrica_usuario"));
+
+if (!admin || admin.tipo !== "admin") {
+  window.location.href = "/fabrica-login";
+  return null;
+}
+
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('produtos');
 

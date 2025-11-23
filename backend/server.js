@@ -10,6 +10,8 @@ import pedidosRoutes from './routes/pedidos.js';
 import relatoriosRoutes from "./routes/relatorios.js";
 import metasRoutes from "./routes/metas.js";
 import loginRoutes from "./routes/login.js";
+import fabricaLogin from "./routes/fabricaLogin.js";
+
 
 
 const app = express();
@@ -38,6 +40,7 @@ app.use('/api/pedidos', pedidosRoutes);
 app.use("/api/relatorios", relatoriosRoutes);
 app.use("/api/metas", metasRoutes);
 app.use("/api/login", loginRoutes);
+app.use("/api/fabrica-login", fabricaLogin);
 
 
 

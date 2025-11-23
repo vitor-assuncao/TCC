@@ -1,79 +1,64 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
 import "./RelatorioVendas.css";
+import { useNavigate } from "react-router-dom";
 
 const RelatorioVendas = () => {
-  const [representantes, setRepresentantes] = useState([]);
-  const [representanteSelecionado, setRepresentanteSelecionado] = useState("");
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const navigate = useNavigate();
+
+  // 🔐 Proteção
+  if (!usuario) {
+    window.location.href = "/login";
+    return null;
+  }
+
   const [relatorio, setRelatorio] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
 
-  // carregar representantes no select
+  const representanteId = usuario.id;
+
+  // Carrega relatório apenas do representante logado
   useEffect(() => {
-    const fetchRepresentantes = async () => {
+    const carregar = async () => {
+      setCarregando(true);
+      setErro(null);
+
       try {
-        const res = await api.get("/representantes");
-        setRepresentantes(res.data);
-      } catch (error) {
-        console.error("Erro ao carregar representantes:", error);
+        const resposta = await api.get(
+          `/relatorios/vendas-representante?representante_id=${representanteId}`
+        );
+        setRelatorio(resposta.data);
+      } catch (err) {
+        console.error(err);
+        setErro("Erro ao carregar relatório de vendas.");
+      } finally {
+        setCarregando(false);
       }
     };
-    fetchRepresentantes();
-  }, []);
 
-  // buscar relatório
-  const buscarRelatorio = async () => {
-    if (!representanteSelecionado) {
-      alert("Selecione um representante!");
-      return;
-    }
-
-    setCarregando(true);
-    setErro(null);
-
-    try {
-      const res = await api.get(
-        `/relatorios/vendas-representante?representante_id=${representanteSelecionado}`
-      );
-      setRelatorio(res.data);
-    } catch (err) {
-      setErro("Erro ao carregar relatório de vendas");
-      console.error(err);
-    } finally {
-      setCarregando(false);
-    }
-  };
+    carregar();
+  }, [representanteId]);
 
   return (
     <div className="relatorio-container">
-      <h2>📊 Relatório de Vendas por Representante</h2>
+      <h2>📊 Meu Relatório de Vendas</h2>
+      <p>Representante: <strong>{usuario.nome}</strong></p>
 
-      {/* Seleção de representante */}
-      <div className="filtro-container">
-        <label htmlFor="representante">Selecione o Representante:</label>
-        <select
-          id="representante"
-          value={representanteSelecionado}
-          onChange={(e) => setRepresentanteSelecionado(e.target.value)}
-        >
-          <option value="">-- Selecione --</option>
-          {representantes.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.nome}
-            </option>
-          ))}
-        </select>
+      {/* 🔙 Botão de voltar */}
+      <button
+        onClick={() => navigate("/representante")}
+        className="botao-voltar-relatorio"
+      >
+        ← Voltar para o Catálogo
+      </button>
 
-        <button onClick={buscarRelatorio}>🔍 Buscar</button>
-      </div>
-
-      {/* Exibição dos resultados */}
       {carregando && <p>Carregando...</p>}
       {erro && <p style={{ color: "red" }}>{erro}</p>}
 
       {!carregando && relatorio.length === 0 && (
-        <p>Nenhum dado encontrado para este representante.</p>
+        <p>Nenhum dado encontrado.</p>
       )}
 
       {relatorio.length > 0 && (
@@ -88,8 +73,8 @@ const RelatorioVendas = () => {
             </tr>
           </thead>
           <tbody>
-            {relatorio.map((item, index) => (
-              <tr key={index}>
+            {relatorio.map((item, idx) => (
+              <tr key={idx}>
                 <td>{item.periodo}</td>
                 <td>{item.total_pedidos}</td>
                 <td>R$ {Number(item.valor_total_vendido).toFixed(2)}</td>

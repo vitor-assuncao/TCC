@@ -11,6 +11,7 @@ import FabricaPedidos from './pages/FabricaPedidos';
 import RelatorioVendas from "./modules/relatorios/RelatorioVendas";
 import FabricaMetas from "./modules/fabrica/components/FabricaMetas";
 import Login from "./modules/autentificação/Login"
+import FabricaLogin from './modules/autentificação/FabricaLogin';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/relatorio-vendas" element={<RelatorioVendas />} />
             <Route path="/fabrica-metas" element={<FabricaMetas />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/fabrica-login" element={<FabricaLogin />} />
           </Routes>
         </div>
       </Router>
