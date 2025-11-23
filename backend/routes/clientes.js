@@ -37,16 +37,22 @@ router.post("/", async (req, res) => {
    [GET] - Listar todos os clientes
    =============================== */
 router.get("/", async (req, res) => {
+  const representanteId = req.query.representante_id;
+
+  if (!representanteId) {
+    return res.status(400).json({ error: "representante_id é obrigatório" });
+  }
+
   try {
-    const [rows] = await pool.query(`
-      SELECT c.*, r.nome AS representante_nome 
-      FROM clientes c
-      LEFT JOIN representantes r ON c.representante_id = r.id
-    `);
+    const [rows] = await pool.query(
+      "SELECT * FROM clientes WHERE representante_id = ?",
+      [representanteId]
+    );
+
     res.json(rows);
   } catch (error) {
-    console.error("Erro ao buscar clientes:", error);
-    res.status(500).json({ error: "Erro ao buscar clientes" });
+    console.error("Erro ao listar clientes:", error);
+    res.status(500).json({ error: "Erro ao listar clientes" });
   }
 });
 

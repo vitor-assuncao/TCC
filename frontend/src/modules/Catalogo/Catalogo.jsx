@@ -5,6 +5,14 @@ import api from "../../services/api";
 import "./Catalogo.css";
 
 const Catalogo = () => {
+
+// 🔒 PROTEÇÃO DE LOGIN
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (!usuario) {
+    window.location.href = "/login";
+    return null;
+  }
+
   const [produtos, setProdutos] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);

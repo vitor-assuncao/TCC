@@ -6,6 +6,14 @@ import RepresentanteForm from '../modules/fabrica/components/RepresentanteForm';
 import './FabricaPage.css';
 
 const FabricaPage = () => {
+
+  const admin = JSON.parse(localStorage.getItem("fabrica_usuario"));
+
+if (!admin || admin.tipo !== "admin") {
+  window.location.href = "/fabrica-login";
+  return null;
+}
+
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('produtos');
 
@@ -29,11 +37,18 @@ const FabricaPage = () => {
     if (!novoPreco) return;
 
     try {
-      await fetch(`http://localhost:3001/api/produtos/${produtoId}/preco`, {
+      const resp = await fetch(`http://localhost:3001/api/produtos/${produtoId}/preco`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ preco_unitario: parseFloat(novoPreco) }),
       });
+
+      if (!resp.ok) {
+        const texto = await resp.text();
+        console.error('Resposta do backend (preço):', resp.status, texto);
+        throw new Error('Erro ao atualizar preço');
+      }
+
       alert('Preço atualizado com sucesso!');
     } catch (error) {
       console.error('Erro ao atualizar preço:', error);
@@ -63,21 +78,35 @@ const FabricaPage = () => {
     }
   };
 
+  // ---------- 🔥 ATUALIZAR QUANTIDADE ----------
   const salvarQuantidade = async (produtoId, novaQuantidade) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/estoque/${produtoId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quantidade: parseInt(novaQuantidade) }),
-      });
+      const response = await fetch(
+        `http://localhost:3001/api/produtos/${produtoId}/quantidade`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantidade: parseInt(novaQuantidade) || 0 }),
+        }
+      );
 
-      if (!response.ok) throw new Error('Erro ao atualizar quantidade');
+      if (!response.ok) {
+        const texto = await response.text();
+        console.error(
+          'Resposta do backend (quantidade):',
+          response.status,
+          texto
+        );
+        throw new Error('Erro ao atualizar quantidade');
+      }
+
       alert('Quantidade atualizada com sucesso!');
     } catch (error) {
       console.error('Erro ao atualizar estoque:', error);
       alert('Erro ao atualizar quantidade.');
     }
   };
+  // ---------------------------------------------
 
   // --- REMOVER PRODUTO ---
   const removerProduto = async (id) => {
@@ -135,7 +164,6 @@ const FabricaPage = () => {
           >
             🧑‍💼 Representantes
           </button>
-          {/* ✅ NOVA ABA DE PEDIDOS */}
           <button
             className={activeTab === 'pedidos' ? 'active' : ''}
             onClick={() => irParaPedidos()}
@@ -204,7 +232,9 @@ const FabricaPage = () => {
                               const novaQtd = parseInt(e.target.value) || 0;
                               setEstoque((prev) =>
                                 prev.map((p) =>
-                                  p.id === produto.id ? { ...p, quantidade: novaQtd } : p
+                                  p.id === produto.id
+                                    ? { ...p, quantidade: novaQtd }
+                                    : p
                                 )
                               );
                             }}
@@ -215,8 +245,14 @@ const FabricaPage = () => {
                         <td>
                           <input
                             type="number"
-                            value={precosEditados[produto.id] ?? produto.preco_unitario ?? 0}
-                            onChange={(e) => handlePrecoChange(produto.id, e.target.value)}
+                            value={
+                              precosEditados[produto.id] ??
+                              produto.preco_unitario ??
+                              0
+                            }
+                            onChange={(e) =>
+                              handlePrecoChange(produto.id, e.target.value)
+                            }
                             step="0.01"
                             min="0"
                             style={{ width: '90px', textAlign: 'right' }}
@@ -226,7 +262,10 @@ const FabricaPage = () => {
                           <button
                             onClick={() => {
                               salvarPreco(produto.id);
-                              salvarQuantidade(produto.id, produto.quantidade);
+                              salvarQuantidade(
+                                produto.id,
+                                produto.quantidade ?? 0
+                              );
                             }}
                             className="btn-salvar"
                           >

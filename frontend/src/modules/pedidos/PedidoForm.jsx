@@ -1,11 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import PedidoContext from "../pedidos/PedidoContext";
 import api from "../../services/api";
 import "./PedidoForm.css";
 
 const PedidoForm = () => {
+
+  // 🔒 PROTEÇÃO DE LOGIN
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (!usuario) {
+    window.location.href = "/login";
+    return null;
+  }
+
   const navigate = useNavigate();
   const location = useLocation();
+  const { limparCarrinho } = useContext(PedidoContext);
 
   // tenta pegar os itens vindos da página anterior ou do localStorage
   const itensDoState = location.state?.itensSelecionados || [];
@@ -22,7 +32,7 @@ const PedidoForm = () => {
 
   const [pedido, setPedido] = useState({
     cliente_id: "",
-    representante_id: "",
+    representante_id: usuario.id,
     condicao_pagamento: "",
     observacoes: "",
     valor_total: 0,
@@ -30,7 +40,6 @@ const PedidoForm = () => {
   });
 
   const [clientes, setClientes] = useState([]);
-  const [representantes, setRepresentantes] = useState([]);
   const [mensagem, setMensagem] = useState("");
   const [carregando, setCarregando] = useState(false);
 
@@ -45,18 +54,14 @@ const PedidoForm = () => {
     setPedido((prev) => ({ ...prev, valor_total: total }));
   }, [pedido.itens]);
 
-  // carrega clientes e representantes do backend
+  // carrega clientes do backend
   useEffect(() => {
     (async () => {
       try {
-        const [cRes, rRes] = await Promise.all([
-          api.get("/clientes"),
-          api.get("/representantes"),
-        ]);
+        const cRes = await api.get(`/clientes?representante_id=${usuario.id}`);
         setClientes(cRes.data || []);
-        setRepresentantes(rRes.data || []);
       } catch (e) {
-        console.error("Erro ao carregar dados:", e);
+        console.error("Erro ao carregar clientes:", e);
       }
     })();
   }, []);
@@ -76,59 +81,58 @@ const PedidoForm = () => {
   };
 
   // enviar pedido para o backend
-// dentro do componente PedidoForm
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+    // validações básicas
+    if (!pedido.cliente_id) {
+      alert("Selecione o cliente.");
+      return;
+    }
 
-  // validações básicas
-  if (!pedido.cliente_id || !pedido.representante_id) {
-    alert("Selecione cliente e representante.");
-    return;
-  }
-  if (!pedido.itens || pedido.itens.length === 0) {
-    alert("Nenhum produto adicionado ao pedido.");
-    return;
-  }
+    if (!pedido.itens || pedido.itens.length === 0) {
+      alert("Nenhum produto adicionado ao pedido.");
+      return;
+    }
 
-  // monta o payload exatamente como o backend espera
-  const produtos = (pedido.itens || [])
-    .filter((it) => it && (it.produto_id || it.id) && Number(it.quantidade) > 0)
-    .map((it) => ({
-      produto_id: Number(it.produto_id || it.id), // tolera id vindo do catálogo
-      quantidade: Number(it.quantidade),
-      preco_unitario: Number(it.preco_unitario || 0),
-    }));
+    const produtos = (pedido.itens || [])
+      .filter((it) => it && (it.produto_id || it.id) && Number(it.quantidade) > 0)
+      .map((it) => ({
+        produto_id: Number(it.produto_id || it.id),
+        quantidade: Number(it.quantidade),
+        preco_unitario: Number(it.preco_unitario || 0),
+      }));
 
-  const body = {
-    cliente_id: Number(pedido.cliente_id),
-    representante_id: Number(pedido.representante_id),
-    condicao_pagamento: pedido.condicao_pagamento || null,
-    observacoes: pedido.observacoes || null,
-    // opcional mandar o total, o back recalcula de qualquer jeito
-    valor_total: Number(
-      produtos.reduce((acc, it) => acc + it.quantidade * it.preco_unitario, 0)
-    ),
-    produtos, // <- nome padronizado para o backend
-  };
+    const body = {
+      cliente_id: Number(pedido.cliente_id),
+      representante_id: Number(usuario.id),
+      condicao_pagamento: pedido.condicao_pagamento || null,
+      observacoes: pedido.observacoes || null,
+      valor_total: Number(
+        produtos.reduce((acc, it) => acc + it.quantidade * it.preco_unitario, 0)
+      ),
+      produtos,
+    };
 
-  console.log("🚀 Enviando pedido:", body);
+    try {
+      await api.post("/pedidos", body);
 
-  try {
-    await api.post("/pedidos", body); // se seu api tem baseURL com /api, deixe só "/pedidos"
-    alert("Pedido criado com sucesso!");
-    // limpar carrinho local/storage se você usa
-    localStorage.removeItem("carrinho_pedido");
-    // redirecionar se quiser
-    // navigate("/representante");
-  } catch (error) {
-    console.error("Erro ao criar pedido:", error?.response?.data || error);
-    alert(
-      "Erro ao criar pedido. " +
+      // 🔥 AGORA SIM LIMPA O CARRINHO DO CONTEXT
+      limparCarrinho();
+
+      // 🔥 remove do localStorage
+      localStorage.removeItem("carrinho_pedido");
+
+      alert("Pedido criado com sucesso!");
+      navigate("/representante");
+    } catch (error) {
+      console.error("Erro ao criar pedido:", error?.response?.data || error);
+      alert(
+        "Erro ao criar pedido. " +
         (error?.response?.data?.error || "Verifique os dados e tente novamente.")
-    );
-  }
-};
+      );
+    }
+  };
 
   return (
     <div className="pedido-form-container">
@@ -137,6 +141,7 @@ const handleSubmit = async (e) => {
       {mensagem && <p className="mensagem">{mensagem}</p>}
 
       <form onSubmit={handleSubmit} className="pedido-form">
+
         {/* Cliente */}
         <div className="form-group">
           <label>Cliente:</label>
@@ -155,25 +160,6 @@ const handleSubmit = async (e) => {
           </select>
         </div>
 
-        {/* Representante */}
-        <div className="form-group">
-          <label>Representante:</label>
-          <select
-            name="representante_id"
-            value={pedido.representante_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Selecione...</option>
-            {representantes.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.nome}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Condição de Pagamento */}
         <div className="form-group">
           <label>Condição de Pagamento:</label>
           <input
@@ -185,7 +171,6 @@ const handleSubmit = async (e) => {
           />
         </div>
 
-        {/* Observações */}
         <div className="form-group">
           <label>Observações:</label>
           <textarea
@@ -196,7 +181,6 @@ const handleSubmit = async (e) => {
           />
         </div>
 
-        {/* Produtos no pedido */}
         <div className="pedido-itens-card">
           <h3>🧾 Produtos no Pedido</h3>
           {(pedido.itens || []).length === 0 ? (
@@ -234,7 +218,6 @@ const handleSubmit = async (e) => {
           </p>
         </div>
 
-        {/* Botões */}
         <div className="botoes-container">
           <button type="submit" disabled={carregando} className="finalizar">
             {carregando ? "Salvando..." : "✅ Finalizar Pedido"}

@@ -14,6 +14,7 @@ router.get("/", async (req, res) => {
       SELECT 
         p.id,
         p.nome,
+        p.descricao,
         p.sku,
         p.preco_unitario,
         p.url_imagem, 
@@ -35,18 +36,50 @@ router.get("/", async (req, res) => {
 // 🔹 CRIAR NOVO PRODUTO
 // =====================
 router.post("/", async (req, res) => {
-  const { nome, sku, preco_unitario, quantidade } = req.body;
+  const {
+    nome,
+    descricao,
+    sku,
+    unidade_medida,
+    preco_unitario,
+    url_imagem,
+    quantidade
+  } = req.body;
 
   if (!nome || !sku) {
     return res.status(400).json({ message: "Nome e SKU são obrigatórios." });
   }
 
   try {
+    // 1️⃣ Cria o produto
     const [result] = await connection.query(
-      "INSERT INTO produtos (nome, sku, preco_unitario, quantidade) VALUES (?, ?, ?, ?)",
-      [nome, sku, preco_unitario || 0, quantidade || 0]
+      `INSERT INTO produtos 
+       (nome, descricao, sku, unidade_medida, preco_unitario, url_imagem)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        nome,
+        descricao || null,
+        sku,
+        unidade_medida || null,
+        preco_unitario || 0,
+        url_imagem || null
+      ]
     );
-    res.status(201).json({ id: result.insertId, message: "Produto criado com sucesso!" });
+
+    const produtoId = result.insertId;
+
+    // 2️⃣ Inicializa o estoque
+    await connection.query(
+      `INSERT INTO estoque (produto_id, quantidade)
+       VALUES (?, ?)`,
+      [produtoId, quantidade || 0]
+    );
+
+    res.status(201).json({
+      id: produtoId,
+      message: "Produto criado com sucesso!"
+    });
+
   } catch (error) {
     console.error("Erro ao criar produto:", error);
     res.status(500).json({ message: "Erro ao criar produto." });
@@ -54,31 +87,32 @@ router.post("/", async (req, res) => {
 });
 
 
+
+
+
 // =====================
 // 🔹 ATUALIZAR QUANTIDADE
 // =====================
-router.put("/estoque/:id", async (req, res) => {
+router.put("/:id/quantidade", async (req, res) => {
   const { id } = req.params;
   const { quantidade } = req.body;
 
   if (quantidade == null) {
-    return res.status(400).json({ message: "Quantidade é obrigatória." });
+    return res.status(400).json({ error: "Quantidade é obrigatória" });
   }
 
   try {
-    const [result] = await connection.query(
-      "UPDATE produtos SET quantidade = ? WHERE id = ?",
-      [quantidade, id]
+    await connection.query(
+      `INSERT INTO estoque (produto_id, quantidade)
+       VALUES (?, ?)
+       ON DUPLICATE KEY UPDATE quantidade = VALUES(quantidade)`,
+      [id, quantidade]
     );
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Produto não encontrado." });
-    }
-
-    res.json({ message: "Quantidade atualizada com sucesso!" });
+    res.json({ message: "Quantidade atualizada com sucesso" });
   } catch (error) {
     console.error("Erro ao atualizar quantidade:", error);
-    res.status(500).json({ message: "Erro ao atualizar quantidade." });
+    res.status(500).json({ error: "Erro ao atualizar quantidade" });
   }
 });
 

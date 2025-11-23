@@ -1,0 +1,97 @@
+/* Container geral */
+.fabrica-login-container {
+  width: 100%;
+  min-height: 100vh;
+  background: #f3f6fc; /* fundo suave */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Card */
+.fabrica-login-form {
+  background: #ffffff;
+  padding: 35px 45px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Título */
+.fabrica-login-container h2 {
+  text-align: center;
+  font-size: 1.9rem;
+  margin-bottom: 20px;
+  color: #222;
+  font-weight: bold;
+}
+
+/* Labels */
+.fabrica-login-form label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+/* Inputs */
+.fabrica-login-form input {
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #d0d4dd;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.2s ease-in-out;
+}
+
+.fabrica-login-form input:focus {
+  border-color: #005bff;
+  box-shadow: 0 0 0 3px rgba(0, 91, 255, 0.2);
+}
+
+/* Botão */
+.fabrica-login-form button {
+  margin-top: 10px;
+  height: 45px;
+  border: none;
+  border-radius: 8px;
+  background: #0066ff;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.fabrica-login-form button:hover {
+  background: #004ecc;
+}
+
+/* Animação */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 420px) {
+  .fabrica-login-form {
+    padding: 25px;
+  }
+
+  .fabrica-login-container h2 {
+    font-size: 1.6rem;
+  }
+}
