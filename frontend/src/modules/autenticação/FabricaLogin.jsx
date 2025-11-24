@@ -24,28 +24,32 @@ const FabricaLogin = () => {
   };
 
   return (
-    <div className="fabrica-login-container">
-      <h2>Login da Fábrica</h2>
+    <div className="fabrica-login-page">
 
-      <form onSubmit={handleLogin} className="fabrica-login-form">
-        <label>Usuário:</label>
-        <input
-          type="text"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
-          required
-        />
+      {/* 🔥 Texto fixo no topo */}
+      <h1 className="titulo-topo">Login da Fábrica</h1>
 
-        <label>Senha:</label>
-        <input
-          type="password"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          required
-        />
+      <div className="fabrica-login-container">
+        <form onSubmit={handleLogin} className="fabrica-login-form">
+          <label>Usuário:</label>
+          <input
+            type="text"
+            value={usuario}
+            onChange={(e) => setUsuario(e.target.value)}
+            required
+          />
 
-        <button type="submit">Entrar</button>
-      </form>
+          <label>Senha:</label>
+          <input
+            type="password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+          />
+
+          <button type="submit">Entrar</button>
+        </form>
+      </div>
     </div>
   );
 };
