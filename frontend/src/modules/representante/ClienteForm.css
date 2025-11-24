@@ -1,60 +1,55 @@
 .cliente-form {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
   padding: 24px;
   margin-top: 20px;
+  border: 1px solid var(--border);
 }
 
 .cliente-form h3 {
-  font-size: 1.3rem;
-  margin-bottom: 16px;
-  color: #333;
+  font-size: 1.25rem;
+  margin-bottom: 14px;
+  color: var(--text);
+  font-weight: 800;
 }
 
 .form-row {
   display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
 }
 
 .form-group {
   flex: 1;
+  min-width: 220px;
   display: flex;
   flex-direction: column;
 }
 
 .form-group label {
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 6px;
+  color: var(--text);
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
   padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
   font-size: 0.95rem;
 }
 
-button {
-  background-color: #667eea;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-button:hover {
-  background-color: #5563d6;
+.cliente-form button {
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-weight: 800;
+  align-self: flex-start;
 }
 
 .error {
-  color: #c53030;
-  font-weight: 600;
+  color: #b91c1c;
+  font-weight: 700;
   margin-bottom: 10px;
 }

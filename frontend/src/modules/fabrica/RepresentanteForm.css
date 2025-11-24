@@ -1,66 +1,64 @@
 .representante-form-container {
-  background: white;
-  border-radius: 16px;
+  background: var(--card);
+  border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
 }
 
 .representante-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .form-row {
   display: flex;
-  gap: 16px;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .form-group {
   flex: 1;
+  min-width: 220px;
   display: flex;
   flex-direction: column;
 }
 
 .form-group label {
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 6px;
+  color: var(--text);
 }
 
 .form-group input {
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
 }
 
 .submit-button {
-  background-color: #667eea;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
   align-self: flex-start;
-}
-
-.submit-button:hover {
-  background-color: #556cd6;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
 }
 
 .representantes-list {
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .representantes-list ul {
   list-style: none;
   padding-left: 0;
+  display: grid;
+  gap: 10px;
 }
 
 .representantes-list li {
-  background: #f6f6f6;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 8px;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
 }

@@ -1,39 +1,43 @@
-/* src/pages/FabricaPage.css */
 .fabrica-container {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: var(--bg);
 }
 
 .fabrica-header {
-  background: white;
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--card);
+  padding: 18px 32px;
+  box-shadow: 0 8px 26px rgba(15, 23, 42, 0.08);
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.4rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .back-button {
-  background: #667eea;
+  background: linear-gradient(120deg, var(--primary) 0%, var(--accent) 100%);
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
+  padding: 10px 16px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 12px 22px rgba(37, 99, 235, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .back-button:hover {
-  background: #5a6fd8;
+  transform: translateY(-2px);
 }
 
 .fabrica-header h1 {
   margin: 0;
-  color: #333;
+  color: var(--text);
+  font-weight: 800;
 }
 
 .fabrica-content {
-  padding: 2rem;
+  padding: 32px 22px 48px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -41,113 +45,126 @@
 .fabrica-nav {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
-  background: white;
-  padding: 1rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 28px;
+  background: var(--card);
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
 }
 
 .fabrica-nav button {
-  padding: 1rem 1.5rem;
-  border: 2px solid #c7d2fe;
-  background: #eef2ff;
-  border-radius: 8px;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  background: #f7f9ff;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 1rem;
-  transition: all 0.3s ease;
-  color: #4c51bf;
-  font-weight: 500;
+  transition: all 0.25s ease;
+  color: var(--text);
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  box-shadow: none;
 }
 
 .fabrica-nav button:hover {
-  border-color: #667eea;
-  color: #3b34c4;
-  background: #e0e7ff;
+  border-color: rgba(37, 99, 235, 0.5);
+  color: var(--primary);
+  background: #eef2ff;
 }
 
 .fabrica-nav button.active {
-  background: #667eea;
+  background: linear-gradient(120deg, var(--primary) 0%, var(--accent) 100%);
   color: white;
-  border-color: #667eea;
-  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.3);
+  border-color: transparent;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.28);
 }
 
 .tab-panel {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--card);
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
 }
 
 .tab-panel h2 {
-  margin-bottom: 1.5rem;
-  color: #333;
+  margin-bottom: 1.25rem;
+  color: var(--text);
+  font-weight: 800;
 }
 
 .error-message {
-  background: #fee;
-  color: #c33;
+  background: #fef2f2;
+  color: #991b1b;
   padding: 1rem;
-  border-radius: 5px;
+  border-radius: 10px;
   margin-bottom: 1rem;
-  border-left: 4px solid #c33;
+  border: 1px solid #fecdd3;
 }
 
 .produtos-list {
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 2px solid #eee;
+  border-top: 1px solid var(--border);
 }
+
 .estoque-tabela {
   width: 100%;
   border-collapse: collapse;
   margin-top: 16px;
+  background: var(--card);
 }
 
 .estoque-tabela th,
 .estoque-tabela td {
-  padding: 10px;
-  border: 1px solid #ddd;
+  padding: 12px;
+  border: 1px solid var(--border);
   text-align: left;
 }
 
+.estoque-tabela th {
+  background: #f8fafc;
+  font-weight: 700;
+  color: var(--text);
+}
+
 .estoque-tabela input {
-  width: 100px;
-  padding: 6px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  width: 110px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff;
 }
 
 .btn-salvar {
-  background-color: #4caf50;
+  background: linear-gradient(120deg, #16a34a 0%, #22c55e 100%);
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 6px 10px;
+  border-radius: 10px;
+  padding: 8px 14px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  font-weight: 700;
+  transition: transform 0.2s ease;
 }
 
 .btn-salvar:hover {
-  background-color: #388e3c;
+  transform: translateY(-1px);
 }
 
 .btn-remover {
-  background-color: #e53e3e;
+  background: linear-gradient(120deg, #ef4444 0%, #dc2626 100%);
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 6px 10px;
+  border-radius: 10px;
+  padding: 8px 14px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  font-weight: 700;
+  transition: transform 0.2s ease;
 }
 
 .btn-remover:hover {
-  background-color: #c53030;
+  transform: translateY(-1px);
 }
