@@ -1,5 +1,5 @@
 import express from "express";
-import connection from "../db.js"; // ajuste o caminho se necessário
+import connection from "../../db.js"; // ajuste o caminho se necessário
 
 const router = express.Router();
 

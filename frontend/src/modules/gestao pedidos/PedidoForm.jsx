@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import PedidoContext from "../pedidos/PedidoContext";
+import PedidoContext from "./PedidoContext";
 import api from "../../services/api";
 import "./PedidoForm.css";
 

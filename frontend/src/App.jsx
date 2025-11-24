@@ -4,14 +4,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomeScreen from './pages/HomeScreen';
 import FabricaPage from './pages/FabricaPage';
 import RepresentantePage from './pages/RepresentantePage';
-import PedidoProvider from './modules/pedidos/PedidoProvider';
-import PedidoForm from './modules/pedidos/PedidoForm';
-import Catalogo from "./modules/Catalogo/Catalogo";
-import FabricaPedidos from './pages/FabricaPedidos';
+import PedidoProvider from './modules/gestao pedidos/PedidoProvider';
+import PedidoForm from './modules/gestao pedidos/PedidoForm';
+import Catalogo from "./modules/representante/Catalogo";
+import FabricaPedidos from './modules/fabrica/FabricaPedidos';
 import RelatorioVendas from "./modules/relatorios/RelatorioVendas";
-import FabricaMetas from "./modules/fabrica/components/FabricaMetas";
-import Login from "./modules/autentificação/Login"
-import FabricaLogin from './modules/autentificação/FabricaLogin';
+import FabricaMetas from "./modules/fabrica/FabricaMetas";
+import Login from "./modules/autenticação/Login"
+import FabricaLogin from './modules/autenticação/FabricaLogin';
 
 function App() {
   return (

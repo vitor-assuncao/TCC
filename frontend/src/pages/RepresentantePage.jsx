@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ClienteForm from "../modules/representante/ClienteForm";
-import Catalogo from "../modules/Catalogo/Catalogo";
+import Catalogo from "../modules/representante/Catalogo";
 import api from "../services/api";  
 import "./RepresentantePage.css";
 

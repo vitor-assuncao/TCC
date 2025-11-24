@@ -1,8 +1,8 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProdutos } from '../hooks/useProdutos';
-import ProdutoForm from '../modules/fabrica/components/ProdutoForm';
-import RepresentanteForm from '../modules/fabrica/components/RepresentanteForm';
+import ProdutoForm from '../modules/fabrica/ProdutoForm';
+import RepresentanteForm from '../modules/fabrica/RepresentanteForm';
 import './FabricaPage.css';
 
 const FabricaPage = () => {
@@ -13,7 +13,6 @@ if (!admin || admin.tipo !== "admin") {
   window.location.href = "/fabrica-login";
   return null;
 }
-
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('produtos');
 

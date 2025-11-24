@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   listarRepresentantes,
   criarRepresentante,
-} from "../../../services/representanteService";
+} from "../../services/representanteService";
 import "./RepresentanteForm.css";
 
 const RepresentanteForm = () => {

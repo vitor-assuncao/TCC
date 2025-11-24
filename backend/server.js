@@ -2,15 +2,23 @@
 import express from 'express';
 import cors from 'cors';
 import pool from "./db.js";
-import produtosRoutes from './routes/produtos.js';
-import estoqueRoutes from './routes/estoque.js';
-import representanteRoutes from './routes/representantes.js';
-import clientesRoutes from "./routes/clientes.js";
-import pedidosRoutes from './routes/pedidos.js';
-import relatoriosRoutes from "./routes/relatorios.js";
-import metasRoutes from "./routes/metas.js";
-import loginRoutes from "./routes/login.js";
-import fabricaLogin from "./routes/fabricaLogin.js";
+import produtosRoutes from './modules/fabrica/produtos.js';
+import estoqueRoutes from './modules/fabrica/estoque.js';
+import representantesRoutes from './modules/fabrica/representantes.js';
+
+// ✔ Correto
+import clientesRoutes from "./modules/representante/clientes.js";
+
+// ✔ Correto
+import pedidosRoutes from './modules/gestao_pedidos/pedidos.js';
+
+// ✔ Correto
+import relatoriosRoutes from "./modules/relatorio/relatorios.js";
+import metasRoutes from "./modules/relatorio/metas.js";
+
+// ✔ Correto
+import loginRoutes from "./modules/autenticacao/login.js";
+import fabricaLogin from "./modules/autenticacao/fabricaLogin.js";
 
 
 
@@ -34,7 +42,7 @@ app.get("/api/test", async (req, res) => {
 
 app.use('/api/produtos', produtosRoutes);
 app.use('/api/estoque', estoqueRoutes);
-app.use('/api/representantes',representanteRoutes );
+app.use('/api/representantes', representantesRoutes);
 app.use("/api/clientes", clientesRoutes);
 app.use('/api/pedidos', pedidosRoutes);
 app.use("/api/relatorios", relatoriosRoutes);

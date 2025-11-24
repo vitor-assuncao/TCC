@@ -1,5 +1,5 @@
 import express from "express";
-import pool from "../db.js";
+import pool from "../../db.js";
 
 const router = express.Router();
 
@@ -181,5 +181,34 @@ router.put("/:id/status", async (req, res) => {
     res.status(500).json({ error: "Erro ao atualizar status" });
   }
 });
+
+// Buscar itens de um pedido específico
+// [GET] Buscar itens de um pedido específico
+router.get("/:id/itens", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT 
+        ip.produto_id,
+        p.nome,
+        ip.quantidade,
+        ip.preco_unitario,
+        (ip.quantidade * ip.preco_unitario) AS total_item
+      FROM itens_pedido ip
+      JOIN produtos p ON p.id = ip.produto_id
+      WHERE ip.pedido_id = ?
+      `,
+      [id]
+    );
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Erro ao buscar itens do pedido:", error);
+    res.status(500).json({ error: "Erro ao buscar itens do pedido" });
+  }
+});
+
 
 export default router;
